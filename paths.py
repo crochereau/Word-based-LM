@@ -1,6 +1,6 @@
 
 
-CHAR_VOCAB_HOME = "vocabularies/" # this is part of the repo, so there should be no need to set this
+CHAR_VOCAB_HOME = "/vocabularies" # this is part of the repo
 
 MODELS_HOME = "/Users/charlotterochereau/Documents/Stage_ENS/Checkpoints/"  # for storing neural network parameters
 LOG_HOME = "/Users/charlotterochereau/Documents/Stage_ENS/Checkpoints/" # for logging validation losses

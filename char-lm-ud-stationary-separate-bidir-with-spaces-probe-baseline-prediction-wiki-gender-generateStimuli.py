@@ -3,6 +3,16 @@ from paths import CHAR_VOCAB_HOME
 from paths import MODELS_HOME
 
 import argparse
+import random
+import random
+import torch
+from torch.autograd import Variable
+import corpusIteratorWiki
+from weight_drop import WeightDrop
+from corpusIterator import CorpusIterator
+import numpy as np
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--language", dest="language", type=str)
 parser.add_argument("--load-from", dest="load_from", type=str)
@@ -10,7 +20,7 @@ parser.add_argument("--load-from", dest="load_from", type=str)
 
 #parser.add_argument("--save-to", dest="save_to", type=str)
 
-import random
+
 
 parser.add_argument("--batchSize", type=int, default=16)
 parser.add_argument("--char_embedding_size", type=int, default=100)
@@ -27,12 +37,6 @@ parser.add_argument("--sequence_length", type=int, default=50)
 
 args=parser.parse_args()
 print(args)
-
-
-
-
-
-import corpusIteratorWiki
 
 
 
@@ -64,16 +68,7 @@ print(itos)
 stoi = dict([(itos[i],i) for i in range(len(itos))])
 
 
-
-
-import random
-
-
-import torch
-
 print(torch.__version__)
-
-from weight_drop import WeightDrop
 
 
 rnn = torch.nn.LSTM(args.char_embedding_size, args.hidden_dim, args.layer_num).cuda()
@@ -116,12 +111,6 @@ else:
 ####################################
 
 
-
-
-
-from torch.autograd import Variable
-
-
 # ([0] + [stoi[training_data[x]]+1 for x in range(b, b+sequence_length) if x < len(training_data)]) 
 
 #from embed_regularize import embedded_dropout
@@ -131,7 +120,6 @@ def encodeWord(word):
       for char in word:
            numeric[-1].append((stoi[char]+3 if char in stoi else 2) if True else 2+random.randint(0, len(itos)))
       return numeric
-
 
 
 
@@ -217,8 +205,6 @@ def encodeSequenceBatchBackward(numeric):
       return (out_backward[-1], hidden_backward)
 
 
-import numpy as np
-
 def predictNext(encoded, preventBoundary=True):
      out, hidden = encoded
      prediction = logsoftmax(output(out.unsqueeze(0))).data.cpu().view(3+len(itos)).numpy() #.view(1,1,-1))).view(3+len(itos)).data.cpu().numpy()
@@ -283,7 +269,6 @@ def doChoice(x, y):
     print(losses)
     return 0 if losses[0] < losses[1] else 1
 
-from corpusIterator import CorpusIterator
 
 adjectives = []
 wentThroughAdjectives = False
@@ -385,10 +370,6 @@ print(confusion3)
 print(confusion4)
 
 
-
-
-
-import numpy as np
 losses  = (doChoiceListLosses([".der", ".die", ".das"]))
 losses = np.exp(-losses)
 print(losses/np.sum(losses))

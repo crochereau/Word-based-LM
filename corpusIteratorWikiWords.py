@@ -8,7 +8,8 @@ def load(language, partition, removeMarkup=True):
   elif language == "english":
     path = WIKIPEDIA_HOME+"/english-"+partition+"-tagged.txt"
   elif language == "german":
-    path = WIKIPEDIA_HOME+""+language+"-"+partition+"-tagged.txt"
+    # path = WIKIPEDIA_HOME+""+language+"-"+partition+"-tagged.txt"
+    path = WIKIPEDIA_HOME+""+language+"-"+partition+".txt"
   else:
     assert False
   chunk = []
@@ -36,6 +37,7 @@ def training(language):
 #     random.shuffle(data)
 #     print("Finished shuffling")
 #     return "".join(data)
+
 def dev(language, removeMarkup=True):
   return load(language, "valid", removeMarkup=removeMarkup)
 

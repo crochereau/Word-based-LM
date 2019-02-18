@@ -1,3 +1,6 @@
+"""Discovering morphological categories - World classes: POS classification"""
+
+
 from paths import WIKIPEDIA_HOME
 from paths import MODELS_HOME
 
@@ -6,28 +9,43 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--language", dest="language", type=str)
 parser.add_argument("--load-from", dest="load_from", type=str)
 #parser.add_argument("--load-from-baseline", dest="load_from_baseline", type=str)
-
 #parser.add_argument("--save-to", dest="save_to", type=str)
-
+import corpusIteratorWikiWords
 import random
+import torch
+from weight_drop import WeightDrop
+import numpy as np
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+import math
 
-parser.add_argument("--batchSize", type=int, default=random.choice([128, 128, 256]))
-parser.add_argument("--char_embedding_size", type=int, default=random.choice([100, 200, 300]))
+parser = argparse.ArgumentParser()
+parser.add_argument("--language", dest="language", type=str, default="german")
+parser.add_argument("--load-from", dest="load_from", type=str, default="wiki-german-nospaces-bptt-words-966024846")
+#parser.add_argument("--load-from-baseline", dest="load_from_baseline", type=str)
+#parser.add_argument("--save-to", dest="save_to", type=str)
+#parser.add_argument("--batchSize", type=int, default=random.choice([128, 128, 256]))
+parser.add_argument("--batchSize", type=int, default=random.choice([128]))
+# parser.add_argument("--char_embedding_size", type=int, default=random.choice([100, 200, 300]))
+parser.add_argument("--char_embedding_size", type=int, default=random.choice([100]))
 parser.add_argument("--hidden_dim", type=int, default=random.choice([1024]))
 parser.add_argument("--layer_num", type=int, default=random.choice([2]))
-parser.add_argument("--weight_dropout_in", type=float, default=random.choice([0.0, 0.0, 0.0, 0.01, 0.05, 0.1]))
-parser.add_argument("--weight_dropout_hidden", type=float, default=random.choice([0.0, 0.05, 0.15, 0.2]))
-parser.add_argument("--char_dropout_prob", type=float, default=random.choice([0.0, 0.0, 0.001, 0.01, 0.01]))
-parser.add_argument("--char_noise_prob", type = float, default=random.choice([0.0, 0.0]))
-parser.add_argument("--learning_rate", type = float, default= random.choice([0.8, 0.9, 1.0,1.0,  1.1, 1.1, 1.2, 1.2, 1.2, 1.2, 1.3, 1.3, 1.4, 1.5]))
-parser.add_argument("--myID", type=int, default=random.randint(0,1000000000))
+# parser.add_argument("--weight_dropout_in", type=float, default=random.choice([0.0, 0.0, 0.0, 0.01, 0.05, 0.1]))
+parser.add_argument("--weight_dropout_in", type=float, default=random.choice([0.1]))
+#parser.add_argument("--weight_dropout_hidden", type=float, default=random.choice([0.0, 0.05, 0.15, 0.2]))
+parser.add_argument("--weight_dropout_hidden", type=float, default=random.choice([0.2]))
+#parser.add_argument("--char_dropout_prob", type=float, default=random.choice([0.0, 0.0, 0.001, 0.01, 0.01]))
+parser.add_argument("--char_dropout_prob", type=float, default=random.choice([0.0]))
+#parser.add_argument("--char_noise_prob", type = float, default=random.choice([0.0, 0.0]))
+parser.add_argument("--char_noise_prob", type=float, default=random.choice([0.01]))
+# parser.add_argument("--learning_rate", type = float, default= random.choice([0.8, 0.9, 1.0,1.0,  1.1, 1.1, 1.2, 1.2, 1.2, 1.2, 1.3, 1.3, 1.4, 1.5]))
+parser.add_argument("--learning_rate", type=float, default=random.choice([0.2]))
+parser.add_argument("--myID", type=int, default=random.randint(0, 1000000000))
 parser.add_argument("--sequence_length", type=int, default=random.choice([50, 50, 80]))
 parser.add_argument("--verbose", type=bool, default=False)
 parser.add_argument("--lr_decay", type=float, default=random.choice([0.5, 0.7, 0.9, 0.95, 0.98, 0.98, 1.0]))
 parser.add_argument("--train_size", type=int, default=25)
 
-
-import math
 
 args=parser.parse_args()
 print(args)
@@ -38,20 +56,16 @@ assert "word" in args.load_from, args.load_from
 print(args)
 
 
-
-import corpusIteratorWikiWords
-
-
 def plusL(its):
-  for it in its:
-       for x in it:
-           yield x
+    for it in its:
+        for x in it:
+            yield x
 
 def plus(it1, it2):
-   for x in it1:
-      yield x
-   for x in it2:
-      yield x
+    for x in it1:
+        yield x
+    for x in it2:
+        yield x
 
 char_vocab_path = {"german" : "vocabularies/german-wiki-word-vocab-50000.txt", "italian" : "vocabularies/italian-wiki-word-vocab-50000.txt"}[args.language]
 
@@ -59,20 +73,10 @@ with open(char_vocab_path, "r") as inFile:
      itos = [x.split("\t")[0] for x in inFile.read().strip().split("\n")[:50000]]
 stoi = dict([(itos[i],i) for i in range(len(itos))])
 
-
-
-
-import random
-
-
-import torch
-
 print(torch.__version__)
 
-from weight_drop import WeightDrop
-
-
-rnn = torch.nn.LSTM(args.char_embedding_size, args.hidden_dim, args.layer_num).cuda()
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+rnn = torch.nn.LSTM(args.char_embedding_size, args.hidden_dim, args.layer_num).to(device)
 
 rnn_parameter_names = [name for name, _ in rnn.named_parameters()]
 print(rnn_parameter_names)
@@ -81,9 +85,9 @@ print(rnn_parameter_names)
 
 rnn_drop = WeightDrop(rnn, [(name, args.weight_dropout_in) for name, _ in rnn.named_parameters() if name.startswith("weight_ih_")] + [ (name, args.weight_dropout_hidden) for name, _ in rnn.named_parameters() if name.startswith("weight_hh_")])
 
-output = torch.nn.Linear(args.hidden_dim, len(itos)+3).cuda()
+output = torch.nn.Linear(args.hidden_dim, len(itos)+3).to(device)
 
-char_embeddings = torch.nn.Embedding(num_embeddings=len(itos)+3, embedding_dim=args.char_embedding_size).cuda()
+char_embeddings = torch.nn.Embedding(num_embeddings=len(itos)+3, embedding_dim=args.char_embedding_size).to(device)
 
 logsoftmax = torch.nn.LogSoftmax(dim=2)
 
@@ -108,7 +112,7 @@ named_modules = {"rnn" : rnn, "output" : output, "char_embeddings" : char_embedd
 
 print("Loading model")
 if args.load_from is not None:
-  checkpoint = torch.load(MODELS_HOME+"/"+args.load_from+".pth.tar")
+  checkpoint = torch.load(MODELS_HOME+"/"+args.load_from+".pth.tar", map_location='cpu')
   for name, module in named_modules.items():
       print(checkpoint[name].keys())
       module.load_state_dict(checkpoint[name])
@@ -117,10 +121,6 @@ else:
 ####################################
 
 
-
-
-
-from torch.autograd import Variable
 
 
 # ([0] + [stoi[training_data[x]]+1 for x in range(b, b+sequence_length) if x < len(training_data)]) 
@@ -165,8 +165,7 @@ lossModule = torch.nn.NLLLoss(size_average=False, reduce=False, ignore_index=0)
 
 def encodeListOfWords(words):
     numeric = [encodeWord(word) for word in words]
-    input_tensor_forward = Variable(torch.LongTensor(numeric).cuda(), requires_grad=False)
-    
+    input_tensor_forward = torch.tensor(numeric, dtype=torch.long, device='cpu', requires_grad=False)
     embedded_forward = char_embeddings(input_tensor_forward)
     return [embedded_forward[i].data.cpu().numpy() for i in range(len(words))]
 
@@ -174,7 +173,6 @@ dog = encodeListOfWords(["dog"])[0]
 cat = encodeListOfWords(["cat"])[0]
 beer = encodeListOfWords(["beer"])[0]
 wine = encodeListOfWords(["wine"])[0]
-import numpy as np
 
 def encodeWord(x):
    return output.weight[stoi[x]+3].data.cpu().numpy()
@@ -258,8 +256,6 @@ def similarity(x,y):
 #      return (out_backward[-1], hidden_backward)
 #
 
-import numpy as np
-
 def predictNext(encoded, preventBoundary=True):
      out, hidden = encoded
      prediction = logsoftmax(output(out.unsqueeze(0))).data.cpu().view(3+len(itos)).numpy() #.view(1,1,-1))).view(3+len(itos)).data.cpu().numpy()
@@ -279,7 +275,7 @@ def keepGenerating(encoded, length=100, backwards=False):
 
       output_string += itos[predicted-3]
 
-      input_tensor_forward = Variable(torch.LongTensor([[predicted]]).transpose(0,1).cuda(), requires_grad=False)
+      input_tensor_forward = torch.tensor([[predicted]], dtype=torch.long, device='cpu', requires_grad=False).transpose(0, 1)
 
       embedded_forward = char_embeddings(input_tensor_forward)
       
@@ -292,7 +288,7 @@ def keepGenerating(encoded, length=100, backwards=False):
     return output_string if not backwards else output_string[::-1]
 
 
-vocabPath = {"german" : WIKIPEDIA_HOME+"german-wiki-word-vocab-POS.txt", "italian" : WIKIPEDIA_HOME+"italian-wiki-word-vocab-POS.txt"}[args.language]
+vocabPath = {"german": WIKIPEDIA_HOME+"german-wiki-word-vocab-POS.txt", "italian": WIKIPEDIA_HOME+"italian-wiki-word-vocab-POS.txt"}[args.language]
 
 
 def detectVerb(pos):
@@ -368,8 +364,7 @@ for _ in range(100):
   predictors = encodedNounsInN + encodedVerbsInN
   
   dependent = [0 for _ in encodedNounsInN] + [1 for _ in encodedVerbsInN]
-  
-  from sklearn.model_selection import train_test_split
+
   x_train_nouns, x_test_nouns, y_train_nouns, y_test_nouns = train_test_split(encodedNounsInN, [0 for _ in encodedNounsInN], test_size=1-args.train_size/500, shuffle=True)
   x_train_verbs, x_test_verbs, y_train_verbs, y_test_verbs = train_test_split(encodedVerbsInN, [1 for _ in encodedVerbsInN], test_size=1-args.train_size/500, shuffle=True)
 
@@ -377,10 +372,6 @@ for _ in range(100):
   y_train = y_train_nouns + y_train_verbs
   x_test = x_test_nouns + x_test_verbs
   y_test = y_test_nouns + y_test_verbs
-
-
-
-  from sklearn.linear_model import LogisticRegression
   
   print("regression")
   
@@ -398,7 +389,6 @@ print(sum(accuracies)/100)
 
 meanAccuracy = sum(accuracies)/100
 meanSquaredAccuracy = sum([x**2 for x in accuracies])/100
-import math
 standardDeviation = math.sqrt(meanSquaredAccuracy - meanAccuracy**2)
 
 print(standardDeviation)

@@ -1,35 +1,45 @@
+"""Case subcategorization - WordNLM"""
+
+
 from paths import WIKIPEDIA_HOME
 from paths import MODELS_HOME
-
+import argparse
+import math
+import corpusIteratorWikiWords
+import torch
+from torch.autograd import Variable
+import numpy as np
+from weight_drop import WeightDrop
+from corpusIterator import CorpusIterator
+import random
 
 # Clear evidence that the model isn't leveraging evidence about the subcategorization of the verb.
 
-import argparse
 parser = argparse.ArgumentParser()
-parser.add_argument("--language", dest="language", type=str)
-parser.add_argument("--load-from", dest="load_from", type=str)
+parser.add_argument("--language", dest="language", type=str, default="german")
+parser.add_argument("--load-from", dest="load_from", type=str, default="wiki-german-nospaces-bptt-words-966024846")
 #parser.add_argument("--load-from-baseline", dest="load_from_baseline", type=str)
-
 #parser.add_argument("--save-to", dest="save_to", type=str)
-
-import random
-
-parser.add_argument("--batchSize", type=int, default=random.choice([128, 128, 256]))
-parser.add_argument("--char_embedding_size", type=int, default=random.choice([100, 200, 300]))
+#parser.add_argument("--batchSize", type=int, default=random.choice([128, 128, 256]))
+parser.add_argument("--batchSize", type=int, default=random.choice([128]))
+# parser.add_argument("--char_embedding_size", type=int, default=random.choice([100, 200, 300]))
+parser.add_argument("--char_embedding_size", type=int, default=random.choice([100]))
 parser.add_argument("--hidden_dim", type=int, default=random.choice([1024]))
 parser.add_argument("--layer_num", type=int, default=random.choice([2]))
-parser.add_argument("--weight_dropout_in", type=float, default=random.choice([0.0, 0.0, 0.0, 0.01, 0.05, 0.1]))
-parser.add_argument("--weight_dropout_hidden", type=float, default=random.choice([0.0, 0.05, 0.15, 0.2]))
-parser.add_argument("--char_dropout_prob", type=float, default=random.choice([0.0, 0.0, 0.001, 0.01, 0.01]))
-parser.add_argument("--char_noise_prob", type = float, default=random.choice([0.0, 0.0]))
-parser.add_argument("--learning_rate", type = float, default= random.choice([0.8, 0.9, 1.0,1.0,  1.1, 1.1, 1.2, 1.2, 1.2, 1.2, 1.3, 1.3, 1.4, 1.5]))
-parser.add_argument("--myID", type=int, default=random.randint(0,1000000000))
+# parser.add_argument("--weight_dropout_in", type=float, default=random.choice([0.0, 0.0, 0.0, 0.01, 0.05, 0.1]))
+parser.add_argument("--weight_dropout_in", type=float, default=random.choice([0.1]))
+#parser.add_argument("--weight_dropout_hidden", type=float, default=random.choice([0.0, 0.05, 0.15, 0.2]))
+parser.add_argument("--weight_dropout_hidden", type=float, default=random.choice([0.2]))
+#parser.add_argument("--char_dropout_prob", type=float, default=random.choice([0.0, 0.0, 0.001, 0.01, 0.01]))
+parser.add_argument("--char_dropout_prob", type=float, default=random.choice([0.0]))
+#parser.add_argument("--char_noise_prob", type = float, default=random.choice([0.0, 0.0]))
+parser.add_argument("--char_noise_prob", type=float, default=random.choice([0.01]))
+# parser.add_argument("--learning_rate", type = float, default= random.choice([0.8, 0.9, 1.0,1.0,  1.1, 1.1, 1.2, 1.2, 1.2, 1.2, 1.3, 1.3, 1.4, 1.5]))
+parser.add_argument("--learning_rate", type=float, default=random.choice([0.2]))
+parser.add_argument("--myID", type=int, default=random.randint(0, 1000000000))
 parser.add_argument("--sequence_length", type=int, default=random.choice([50, 50, 80]))
 parser.add_argument("--verbose", type=bool, default=False)
 parser.add_argument("--lr_decay", type=float, default=random.choice([0.5, 0.7, 0.9, 0.95, 0.98, 0.98, 1.0]))
-
-
-import math
 
 args=parser.parse_args()
 print(args)
@@ -38,11 +48,6 @@ print(args)
 assert "word" in args.load_from, args.load_from
 
 print(args)
-
-
-
-import corpusIteratorWikiWords
-
 
 
 def plus(it1, it2):
@@ -58,19 +63,10 @@ with open(char_vocab_path, "r") as inFile:
 stoi = dict([(itos[i],i) for i in range(len(itos))])
 
 
-
-
-import random
-
-
-import torch
-
 print(torch.__version__)
 
-from weight_drop import WeightDrop
-
-
-rnn = torch.nn.LSTM(args.char_embedding_size, args.hidden_dim, args.layer_num).cuda()
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+rnn = torch.nn.LSTM(args.char_embedding_size, args.hidden_dim, args.layer_num).to(device)
 
 rnn_parameter_names = [name for name, _ in rnn.named_parameters()]
 print(rnn_parameter_names)
@@ -79,9 +75,9 @@ print(rnn_parameter_names)
 
 rnn_drop = WeightDrop(rnn, [(name, args.weight_dropout_in) for name, _ in rnn.named_parameters() if name.startswith("weight_ih_")] + [ (name, args.weight_dropout_hidden) for name, _ in rnn.named_parameters() if name.startswith("weight_hh_")])
 
-output = torch.nn.Linear(args.hidden_dim, len(itos)+3).cuda()
+output = torch.nn.Linear(args.hidden_dim, len(itos)+3).to(device)
 
-char_embeddings = torch.nn.Embedding(num_embeddings=len(itos)+3, embedding_dim=args.char_embedding_size).cuda()
+char_embeddings = torch.nn.Embedding(num_embeddings=len(itos)+3, embedding_dim=args.char_embedding_size).to(device)
 
 logsoftmax = torch.nn.LogSoftmax(dim=2)
 
@@ -102,23 +98,17 @@ learning_rate = args.learning_rate
 
 optim = torch.optim.SGD(parameters(), lr=learning_rate, momentum=0.0) # 0.02, 0.9
 
-named_modules = {"rnn" : rnn, "output" : output, "char_embeddings" : char_embeddings, "optim" : optim}
+named_modules = {"rnn": rnn, "output": output, "char_embeddings": char_embeddings, "optim": optim}
 
 print("Loading model")
 if args.load_from is not None:
-  checkpoint = torch.load(MODELS_HOME+"/"+args.load_from+".pth.tar")
+  checkpoint = torch.load(MODELS_HOME+"/"+args.load_from+".pth.tar", map_location='cpu')
   for name, module in named_modules.items():
       print(checkpoint[name].keys())
       module.load_state_dict(checkpoint[name])
 else:
    assert False
 ####################################
-
-
-
-
-
-from torch.autograd import Variable
 
 
 # ([0] + [stoi[training_data[x]]+1 for x in range(b, b+sequence_length) if x < len(training_data)]) 
@@ -132,15 +122,13 @@ def encodeWord(word):
       return numeric
 
 
-
-
 rnn_drop.train(False)
 #rnn_forward_drop.train(False)
 #rnn_backward_drop.train(False)
 
 #baseline_rnn_encoder_drop.train(False)
 
-lossModule = torch.nn.NLLLoss(size_average=False, reduce=False, ignore_index=0)
+lossModule = torch.nn.NLLLoss(reduction='none', ignore_index=0)
 
 
 def choice(numeric1, numeric2):
@@ -151,7 +139,7 @@ def choice(numeric1, numeric2):
      for i in range(len(numeric)):
         while len(numeric[i]) < maxLength:
               numeric[i].append(0)
-     input_tensor_forward = Variable(torch.LongTensor([[0]+x for x in numeric]).transpose(0,1).cuda(), requires_grad=False)
+     input_tensor_forward = torch.tensor([[0] + x for x in numeric], dtype=torch.long, device='cpu', requires_grad=False).transpose(0, 1)
      
      target = input_tensor_forward[1:]
      input_cut = input_tensor_forward[:-1]
@@ -159,7 +147,7 @@ def choice(numeric1, numeric2):
      out_forward, hidden_forward = rnn_drop(embedded_forward, None)
 
      prediction = logsoftmax(output(out_forward)) #.data.cpu().view(-1, 3+len(itos)).numpy() #.view(1,1,-1))).view(3+len(itos)).data.cpu().numpy()
-     losses = lossModule(prediction.view(-1, len(itos)+3), target.view(-1)).view(maxLength, 2)
+     losses = lossModule(prediction.reshape(-1, len(itos) + 3), target.view(-1)).reshape(maxLength, 2)
      losses = losses.sum(0).data.cpu().numpy()
      return losses
 
@@ -175,7 +163,8 @@ def choiceList(numeric):
      for i in range(len(numeric)):
         while len(numeric[i]) < maxLength:
               numeric[i].append(0)
-     input_tensor_forward = Variable(torch.LongTensor([[0]+x for x in numeric]).transpose(0,1).cuda(), requires_grad=False)
+     input_tensor_forward = torch.tensor([[0]+x for x in numeric], dtype=torch.long, device='cpu', requires_grad=False).transpose(0,1)
+
      
      target = input_tensor_forward[1:]
      input_cut = input_tensor_forward[:-1]
@@ -183,15 +172,14 @@ def choiceList(numeric):
      out_forward, hidden_forward = rnn_drop(embedded_forward, None)
 
      prediction = logsoftmax(output(out_forward)) #.data.cpu().view(-1, 3+len(itos)).numpy() #.view(1,1,-1))).view(3+len(itos)).data.cpu().numpy()
-     losses = lossModule(prediction.view(-1, len(itos)+3), target.view(-1)).view(maxLength, len(numeric))
+     losses = lossModule(prediction.reshape(-1, len(itos) + 3), target.reshape(-1)).view(maxLength, len(numeric))
      losses = losses.sum(0).data.cpu().numpy()
      return losses
 
 
 
 def encodeSequenceBatchForward(numeric):
-      input_tensor_forward = Variable(torch.LongTensor([[0]+x for x in numeric]).transpose(0,1).cuda(), requires_grad=False)
-
+      input_tensor_forward = torch.tensor([[0] + x for x in numeric], dtype=torch.long, device='cpu', requires_grad=False).transpose(0, 1)
 #      target_tensor_forward = Variable(torch.LongTensor(numeric).transpose(0,1)[2:].cuda(), requires_grad=False).view(args.sequence_length+1, len(numeric), 1, 1)
       embedded_forward = char_embeddings(input_tensor_forward)
       out_forward, hidden_forward = rnn_drop(embedded_forward, None)
@@ -205,18 +193,15 @@ def encodeSequenceBatchForward(numeric):
 def encodeSequenceBatchBackward(numeric):
 #      print([itos[x-3] for x in numeric[0]])
 #      print([[0]+(x[::-1]) for x in numeric])
-      input_tensor_backward = Variable(torch.LongTensor([[0]+(x[::-1]) for x in numeric]).transpose(0,1).cuda(), requires_grad=False)
+    input_tensor_backward = torch.tensor([[0] + (x[::-1]) for x in numeric], dtype=torch.long, device='cpu',requires_grad=False).transpose(0, 1)
 #      target_tensor_backward = Variable(torch.LongTensor([x[::-1] for x in numeric]).transpose(0,1)[:-2].cuda(), requires_grad=False).view(args.sequence_length+1, len(numeric), 1, 1)
-      embedded_backward = char_embeddings(input_tensor_backward)
-      out_backward, hidden_backward = rnn_backward_drop(embedded_backward, None)
+    embedded_backward = char_embeddings(input_tensor_backward)
+    out_backward, hidden_backward = rnn_backward_drop(embedded_backward, None)
 #      out_backward = out_backward.view(args.sequence_length+1, len(numeric), -1)
 #      logits_backward = output(out_backward) 
 #      log_probs_backward = logsoftmax(logits_backward)
+    return (out_backward[-1], hidden_backward)
 
-      return (out_backward[-1], hidden_backward)
-
-
-import numpy as np
 
 def predictNext(encoded, preventBoundary=True):
      out, hidden = encoded
@@ -237,7 +222,7 @@ def keepGenerating(encoded, length=100, backwards=False):
 
       output_string += itos[predicted-3]
 
-      input_tensor_forward = Variable(torch.LongTensor([[predicted]]).transpose(0,1).cuda(), requires_grad=False)
+      input_tensor_forward = torch.tensor([[predicted]], dtype=torch.long, device='cpu', requires_grad=False).transpose(0, 1)
 
       embedded_forward = char_embeddings(input_tensor_forward)
       
@@ -282,6 +267,8 @@ def doChoiceList(xs, printHere=True):
     if printHere:
       print(losses)
     return np.argmin(losses)
+
+
 def doChoiceListLosses(xs, printHere=True):
     if printHere:
       for x in xs:
@@ -290,7 +277,6 @@ def doChoiceListLosses(xs, printHere=True):
     if printHere:
       print(losses)
     return losses
-
 
 
 def doChoice(x, y):
@@ -416,7 +402,6 @@ with open(WIKIPEDIA_HOME+"german-wiki-word-vocab-lemmas-POS-uniq.txt", "r") as i
       
 print(len(adjectives))
 
-from corpusIterator import CorpusIterator
 data = CorpusIterator("German", partition="train", removePunctuation=False).iterator()
 frames = []
 for sentence in data:
@@ -474,7 +459,6 @@ print(frames[:10])
 # Hypothesis: the model is capable of getting this right when the adjective distinguishes the case, but not so easily when case marking on the noun is required. 
 # (Removing the noun, accuracy is even perfect in the case where the adjective helps distinguish)
 
-import random
 
 preposition = "mit"
 correctByPMI = 0

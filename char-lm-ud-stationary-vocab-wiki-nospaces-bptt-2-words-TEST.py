@@ -2,40 +2,44 @@ from paths import WIKIPEDIA_HOME
 from paths import LOG_HOME
 from paths import MODELS_HOME
 import sys
-
 import argparse
-parser = argparse.ArgumentParser()
-parser.add_argument("--language", dest="language", type=str)
-parser.add_argument("--load-from", dest="load_from", type=str)
-
 import random
+import math
+import corpusIteratorWikiWords
+import random
+import torch
+from weight_drop import WeightDrop
 
-parser.add_argument("--batchSize", type=int, default=random.choice([128, 128, 128, 256]))
-parser.add_argument("--char_embedding_size", type=int, default=random.choice([100, 200, 200, 300, 300, 300, 300, 1024]))
+parser = argparse.ArgumentParser()
+parser.add_argument("--language", dest="language", type=str, default="german")
+parser.add_argument("--load-from", dest="load_from", type=str, default="wiki-german-nospaces-bptt-words-966024846")
+#parser.add_argument("--load-from-baseline", dest="load_from_baseline", type=str)
+#parser.add_argument("--save-to", dest="save_to", type=str)
+#parser.add_argument("--batchSize", type=int, default=random.choice([128, 128, 128, 256]))
+parser.add_argument("--batchSize", type=int, default=random.choice([128]))
+# parser.add_argument("--char_embedding_size", type=int, default=random.choice([100, 200, 200, 300, 300, 300, 300, 1024]))
+parser.add_argument("--char_embedding_size", type=int, default=random.choice([200]))
 parser.add_argument("--hidden_dim", type=int, default=random.choice([1024]))
-parser.add_argument("--layer_num", type=int, default=random.choice([1, 2]))
-parser.add_argument("--weight_dropout_in", type=float, default=random.choice([0.0, 0.0, 0.0, 0.01]))
-parser.add_argument("--weight_dropout_hidden", type=float, default=random.choice([0.0, 0.05, 0.15, 0.2]))
-parser.add_argument("--char_dropout_prob", type=float, default=random.choice([0.0, 0.0, 0.001, 0.01, 0.01]))
-parser.add_argument("--char_noise_prob", type = float, default=random.choice([0.0, 0.0]))
-parser.add_argument("--learning_rate", type = float, default= random.choice([0.6, 0.7, 0.8, 0.9, 1.0,1.0,  1.1, 1.1, 1.2, 1.2, 1.2, 1.2, 1.3, 1.3, 1.4, 1.5, 1.6]))
-parser.add_argument("--myID", type=int, default=random.randint(0,1000000000))
+# parser.add_argument("--layer_num", type=int, default=random.choice([1, 2]))
+parser.add_argument("--layer_num", type=int, default=random.choice([2]))
+# parser.add_argument("--weight_dropout_in", type=float, default=random.choice([0.0, 0.0, 0.0, 0.01]))
+parser.add_argument("--weight_dropout_in", type=float, default=random.choice([0.1]))
+#parser.add_argument("--weight_dropout_hidden", type=float, default=random.choice([0.0, 0.05, 0.15, 0.2]))
+parser.add_argument("--weight_dropout_hidden", type=float, default=random.choice([0.2]))
+#parser.add_argument("--char_dropout_prob", type=float, default=random.choice([0.0, 0.0, 0.001, 0.01, 0.01]))
+parser.add_argument("--char_dropout_prob", type=float, default=random.choice([0.0]))
+#parser.add_argument("--char_noise_prob", type = float, default=random.choice([0.0, 0.0]))
+parser.add_argument("--char_noise_prob", type=float, default=random.choice([0.01]))
+# parser.add_argument("--learning_rate", type = float, default= random.choice([0.6, 0.7, 0.8, 0.9, 1.0,1.0,  1.1, 1.1, 1.2, 1.2, 1.2, 1.2, 1.3, 1.3, 1.4, 1.5, 1.6]))
+parser.add_argument("--learning_rate", type=float, default=random.choice([0.2]))
+parser.add_argument("--myID", type=int, default=random.randint(0, 1000000000))
 parser.add_argument("--sequence_length", type=int, default=random.choice([50]))
 parser.add_argument("--verbose", type=bool, default=False)
 parser.add_argument("--lr_decay", type=float, default=random.choice([0.7, 0.9, 0.95, 0.98, 0.98, 1.0]))
 
 
-import math
-
 args=parser.parse_args()
-
-
 print(args)
-
-
-
-import corpusIteratorWikiWords
-
 
 
 def plus(it1, it2):
@@ -50,20 +54,10 @@ with open(char_vocab_path, "r") as inFile:
      itos = [x.split("\t")[0] for x in inFile.read().strip().split("\n")[:50000]]
 stoi = dict([(itos[i],i) for i in range(len(itos))])
 
-
-
-
-import random
-
-
-import torch
-
 print(torch.__version__)
 
-from weight_drop import WeightDrop
-
-
-rnn = torch.nn.LSTM(args.char_embedding_size, args.hidden_dim, args.layer_num).cuda()
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+rnn = torch.nn.LSTM(args.char_embedding_size, args.hidden_dim, args.layer_num).to(device)
 
 rnn_parameter_names = [name for name, _ in rnn.named_parameters()]
 print(rnn_parameter_names)
@@ -72,14 +66,14 @@ print(rnn_parameter_names)
 
 rnn_drop = WeightDrop(rnn, [(name, args.weight_dropout_in) for name, _ in rnn.named_parameters() if name.startswith("weight_ih_")] + [ (name, args.weight_dropout_hidden) for name, _ in rnn.named_parameters() if name.startswith("weight_hh_")])
 
-output = torch.nn.Linear(args.hidden_dim, len(itos)+3).cuda()
+output = torch.nn.Linear(args.hidden_dim, len(itos)+3).to(device)
 
-char_embeddings = torch.nn.Embedding(num_embeddings=len(itos)+3, embedding_dim=args.char_embedding_size).cuda()
+char_embeddings = torch.nn.Embedding(num_embeddings=len(itos)+3, embedding_dim=args.char_embedding_size).to(device)
 
 logsoftmax = torch.nn.LogSoftmax(dim=2)
 
 train_loss = torch.nn.NLLLoss(ignore_index=0)
-print_loss = torch.nn.NLLLoss(size_average=False, reduce=False, ignore_index=0)
+print_loss = torch.nn.NLLLoss(reduction='none', ignore_index=0)
 char_dropout = torch.nn.Dropout2d(p=args.char_dropout_prob)
 
 modules = [rnn, output, char_embeddings]
@@ -95,17 +89,14 @@ learning_rate = args.learning_rate
 
 optim = torch.optim.SGD(parameters(), lr=learning_rate, momentum=0.0) # 0.02, 0.9
 
-named_modules = {"rnn" : rnn, "output" : output, "char_embeddings" : char_embeddings, "optim" : optim}
+named_modules = {"rnn": rnn, "output": output, "char_embeddings" : char_embeddings, "optim": optim}
 
 if args.load_from is not None:
-  checkpoint = torch.load(MODELS_HOME+"/"+args.load_from+".pth.tar")
+  checkpoint = torch.load(MODELS_HOME+"/"+args.load_from+".pth.tar", map_location='cpu')
   for name, module in named_modules.items():
       module.load_state_dict(checkpoint[name])
 else:
   assert False
-
-from torch.autograd import Variable
-
 
 # ([0] + [stoi[training_data[x]]+1 for x in range(b, b+sequence_length) if x < len(training_data)]) 
 
@@ -146,7 +137,7 @@ def prepareDatasetChunks(data, train=True):
          numerified = numerified[cutoff:]
         
          #print(len(numerifiedCurrent))
-         numerifiedCurrent = torch.LongTensor(numerifiedCurrent).view(args.batchSize, -1, sequenceLengthHere).transpose(0,1).transpose(1,2).cuda()
+         numerifiedCurrent = torch.tensor(numerifiedCurrent, dtype=torch.long).view(args.batchSize, -1, sequenceLengthHere).transpose(0,1).transpose(1,2).to(device)
          #print(numerifiedCurrent.size())
          #quit()
          numberOfSequences = numerifiedCurrent.size()[0]
@@ -175,10 +166,6 @@ def prepareDatasetChunksPrevious(data, train=True):
             numeric = [0]
 
 
-
-
-
-
 def prepareDataset(data, train=True):
       numeric = [0]
       count = 0
@@ -195,7 +182,7 @@ def prepareDataset(data, train=True):
 
 hidden = None
 
-zeroBeginning = torch.LongTensor([0 for _ in range(args.batchSize)]).cuda().view(1,args.batchSize)
+zeroBeginning = torch.tensor([0 for _ in range(args.batchSize)], dtype=torch.long).to(device).view(1,args.batchSize)
 beginning = None
 
 def forward(numeric, train=True, printHere=False):
@@ -205,15 +192,15 @@ def forward(numeric, train=True, printHere=False):
           hidden = None
           beginning = zeroBeginning
       elif hidden is not None:
-          hidden = tuple([Variable(x.data).detach() for x in hidden])
+          hidden = tuple([torch.Tensor(x.data).detach() for x in hidden])
 
       numeric = torch.cat([beginning, numeric], dim=0)
 
       beginning = numeric[numeric.size()[0]-1].view(1, args.batchSize)
 
 
-      input_tensor = Variable(numeric[:-1], requires_grad=False)
-      target_tensor = Variable(numeric[1:], requires_grad=False)
+      input_tensor = torch.Tensor(numeric[:-1], requires_grad=False)
+      target_tensor = torch.Tensor(numeric[1:], requires_grad=False)
       
 
     #  print(char_embeddings)

@@ -190,8 +190,6 @@ def prepareDatasetChunksPrevious(data, train=True):
 
 
 
-
-
 def prepareDataset(data, train=True):
       numeric = [0]
       count = 0
@@ -285,8 +283,6 @@ for epoch in range(10000):
    training_data = corpusIteratorWikiSequences.training(args.language, args.sequence)
    print("Got data")
    training_chars = prepareDatasetChunks(training_data, train=True)
-
-
 
    rnn_drop.train(True)
    startTime = time.time()

@@ -1,16 +1,21 @@
+"""Train LM"""
+
 from paths import WIKIPEDIA_HOME
 from paths import LOG_HOME
 from paths import MODELS_HOME
 import sys
-
+import random
+import torch
 import argparse
+import math
+import corpusIteratorWikiWords
+from weight_drop import WeightDrop
+import time
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--language", dest="language", type=str)
 parser.add_argument("--load-from", dest="load_from", type=str)
 parser.add_argument("--save-to", dest="save_to", type=str)
-
-import random
-
 parser.add_argument("--batchSize", type=int, default=random.choice([128, 128, 128, 256]))
 parser.add_argument("--char_embedding_size", type=int, default=random.choice([100, 200, 200, 300, 300, 300, 300, 1024]))
 parser.add_argument("--hidden_dim", type=int, default=random.choice([1024]))
@@ -25,9 +30,6 @@ parser.add_argument("--sequence_length", type=int, default=random.choice([50]))
 parser.add_argument("--verbose", type=bool, default=False)
 parser.add_argument("--lr_decay", type=float, default=random.choice([0.7, 0.9, 0.95, 0.98, 0.98, 1.0]))
 
-
-import math
-
 args=parser.parse_args()
 
 if "MYID" in args.save_to:
@@ -36,11 +38,6 @@ if "MYID" in args.save_to:
 assert "word" in args.save_to, args.save_to
 
 print(args)
-
-
-
-import corpusIteratorWikiWords
-
 
 
 def plus(it1, it2):
@@ -56,19 +53,12 @@ with open(char_vocab_path, "r") as inFile:
 stoi = dict([(itos[i],i) for i in range(len(itos))])
 
 
-
-
-import random
-
-
-import torch
-
 print(torch.__version__)
 
-from weight_drop import WeightDrop
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 
-rnn = torch.nn.LSTM(args.char_embedding_size, args.hidden_dim, args.layer_num).cuda()
+rnn = torch.nn.LSTM(args.char_embedding_size, args.hidden_dim, args.layer_num).to(device)
 
 rnn_parameter_names = [name for name, _ in rnn.named_parameters()]
 print(rnn_parameter_names)
@@ -77,9 +67,9 @@ print(rnn_parameter_names)
 
 rnn_drop = WeightDrop(rnn, [(name, args.weight_dropout_in) for name, _ in rnn.named_parameters() if name.startswith("weight_ih_")] + [ (name, args.weight_dropout_hidden) for name, _ in rnn.named_parameters() if name.startswith("weight_hh_")])
 
-output = torch.nn.Linear(args.hidden_dim, len(itos)+3).cuda()
+output = torch.nn.Linear(args.hidden_dim, len(itos)+3).to(device)
 
-char_embeddings = torch.nn.Embedding(num_embeddings=len(itos)+3, embedding_dim=args.char_embedding_size).cuda()
+char_embeddings = torch.nn.Embedding(num_embeddings=len(itos)+3, embedding_dim=args.char_embedding_size).to(device)
 
 logsoftmax = torch.nn.LogSoftmax(dim=2)
 
@@ -106,8 +96,6 @@ if args.load_from is not None:
   checkpoint = torch.load(MODELS_HOME+"/"+args.load_from+".pth.tar")
   for name, module in named_modules.items():
       module.load_state_dict(checkpoint[name])
-
-from torch.autograd import Variable
 
 
 # ([0] + [stoi[training_data[x]]+1 for x in range(b, b+sequence_length) if x < len(training_data)]) 
@@ -149,7 +137,7 @@ def prepareDatasetChunks(data, train=True):
          numerified = numerified[cutoff:]
         
          #print(len(numerifiedCurrent))
-         numerifiedCurrent = torch.LongTensor(numerifiedCurrent).view(args.batchSize, -1, sequenceLengthHere).transpose(0,1).transpose(1,2).cuda()
+         numerifiedCurrent = torch.LongTensor(numerifiedCurrent).view(args.batchSize, -1, sequenceLengthHere).transpose(0,1).transpose(1,2).to(device)
          #print(numerifiedCurrent.size())
          #quit()
          numberOfSequences = numerifiedCurrent.size()[0]
@@ -198,7 +186,7 @@ def prepareDataset(data, train=True):
 
 hidden = None
 
-zeroBeginning = torch.LongTensor([0 for _ in range(args.batchSize)]).cuda().view(1,args.batchSize)
+zeroBeginning = torch.LongTensor([0 for _ in range(args.batchSize)]).to(device).view(1,args.batchSize)
 beginning = None
 
 def forward(numeric, train=True, printHere=False):
@@ -266,15 +254,15 @@ def backward(loss, printHere):
 
 lossHasBeenBad = 0
 
-import time
-
 totalStartTime = time.time()
 
 
 devLosses = []
 for epoch in range(10000):
    print(epoch)
-   training_data = corpusIteratorWikiWords.training(args.language)
+   training_data =
+
+   .training(args.language)
    print("Got data")
    training_chars = prepareDatasetChunks(training_data, train=True)
 
