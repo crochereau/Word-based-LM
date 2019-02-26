@@ -35,7 +35,7 @@ args=parser.parse_args()
 if "MYID" in args.save_to:
    args.save_to = args.save_to.replace("MYID", str(args.myID))
 
-assert "word" in args.save_to, args.save_to
+#assert "word" in args.save_to, args.save_to
 
 print(args)
 
@@ -74,7 +74,7 @@ char_embeddings = torch.nn.Embedding(num_embeddings=len(itos)+3, embedding_dim=a
 logsoftmax = torch.nn.LogSoftmax(dim=2)
 
 train_loss = torch.nn.NLLLoss(ignore_index=0)
-print_loss = torch.nn.NLLLoss(size_average=False, reduce=False, ignore_index=0)
+print_loss = torch.nn.NLLLoss(reduction=None, ignore_index=0)
 char_dropout = torch.nn.Dropout2d(p=args.char_dropout_prob)
 
 modules = [rnn, output, char_embeddings]
@@ -93,7 +93,7 @@ optim = torch.optim.SGD(parameters(), lr=learning_rate, momentum=0.0) # 0.02, 0.
 named_modules = {"rnn" : rnn, "output" : output, "char_embeddings" : char_embeddings, "optim" : optim}
 
 if args.load_from is not None:
-  checkpoint = torch.load(MODELS_HOME+"/"+args.load_from+".pth.tar")
+  checkpoint = torch.load(MODELS_HOME+args.load_from+".pth.tar")
   for name, module in named_modules.items():
       module.load_state_dict(checkpoint[name])
 
@@ -164,10 +164,6 @@ def prepareDatasetChunksPrevious(data, train=True):
          if len(numeric) > args.sequence_length:
             yield numeric
             numeric = [0]
-
-
-
-
 
 
 def prepareDataset(data, train=True):
@@ -260,13 +256,9 @@ totalStartTime = time.time()
 devLosses = []
 for epoch in range(10000):
    print(epoch)
-   training_data =
-
-   .training(args.language)
+   training_data = corpusIteratorWikiWords.training(args.language)
    print("Got data")
    training_chars = prepareDatasetChunks(training_data, train=True)
-
-
 
    rnn_drop.train(True)
    startTime = time.time()
