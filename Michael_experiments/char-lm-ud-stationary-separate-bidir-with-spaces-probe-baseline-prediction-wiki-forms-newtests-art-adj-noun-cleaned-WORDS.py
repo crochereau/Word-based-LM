@@ -91,7 +91,7 @@ named_modules = {"rnn": rnn, "output": output, "char_embeddings": char_embedding
 
 print("Loading model")
 if args.load_from is not None:
-  checkpoint = torch.load(MODELS_HOME+"/"+args.load_from+".pth.tar", map_location=device)
+  checkpoint = torch.load(MODELS_HOME+args.load_from+".pth.tar", map_location=device)
   for name, module in named_modules.items():
       print(checkpoint[name].keys())
       module.load_state_dict(checkpoint[name])
@@ -138,7 +138,7 @@ def choice(numeric1, numeric2):
 
      prediction = logsoftmax(output(out_forward)) #.data.cpu().view(-1, 3+len(itos)).numpy() #.view(1,1,-1))).view(3+len(itos)).data.tt().numpy()
      losses = lossModule(prediction.reshape(-1, len(itos)+3), target.view(-1)).reshape(maxLength, 2)
-     losses = losses.sum(0).data.to(device).numpy()
+     losses = losses.sum(0).data.cpu().numpy()
      return losses
 
 
@@ -162,7 +162,7 @@ def choiceList(numeric):
 
      prediction = logsoftmax(output(out_forward)) #.data.cpu().view(-1, 3+len(itos)).numpy() #.view(1,1,-1))).view(3+len(itos)).data.cpu().numpy()
      losses = lossModule(prediction.reshape(-1, len(itos)+3), target.reshape(-1)).view(maxLength, len(numeric))
-     losses = losses.sum(0).data.to(device).numpy()
+     losses = losses.sum(0).data.cpu().numpy()
      return losses
 
 
@@ -262,8 +262,6 @@ def doChoiceListLosses(xs, printHere=True):
     if printHere:
       print(losses)
     return losses
-
-
 
 def doChoice(x, y):
     print(x)

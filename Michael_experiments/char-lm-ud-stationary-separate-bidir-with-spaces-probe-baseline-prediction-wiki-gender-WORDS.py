@@ -114,7 +114,6 @@ if args.load_from is not None:
         module.load_state_dict(checkpoint[name])
 else:
     assert False
-####################################
 
 
 
