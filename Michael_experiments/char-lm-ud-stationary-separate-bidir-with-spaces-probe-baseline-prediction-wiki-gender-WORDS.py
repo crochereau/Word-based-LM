@@ -9,6 +9,7 @@ import random
 import torch
 from weight_drop import WeightDrop
 import numpy as np
+import math
 from corpusIterator import CorpusIterator
 
 parser = argparse.ArgumentParser()
@@ -105,121 +106,94 @@ named_modules = {"rnn": rnn, "output": output, "char_embeddings": char_embedding
 
 print("Loading model")
 if args.load_from is not None:
-# Loads model from checkpoint
-#  Forcibly loads model onto cpu. Delete map_location argument to have storage on gpu.
-  checkpoint = torch.load(MODELS_HOME+"/"+args.load_from+".pth.tar", map_location=device)
-  for name, module in named_modules.items():
-      print(checkpoint[name].keys())
-      module.load_state_dict(checkpoint[name])
+    # Loads model from checkpoint
+    #  Forcibly loads model onto cpu. Delete map_location argument to have storage on gpu.
+    checkpoint = torch.load(MODELS_HOME+"/"+args.load_from+".pth.tar", map_location=device)
+    for name, module in named_modules.items():
+        print(checkpoint[name].keys())
+        module.load_state_dict(checkpoint[name])
 else:
-   assert False
+    assert False
 ####################################
 
 
 
-# ([0] + [stoi[training_data[x]]+1 for x in range(b, b+sequence_length) if x < len(training_data)]) 
-
-#from embed_regularize import embedded_dropout
-
 def encodeWord(word):
-      numeric = [[]]
-      for char in word:
-           numeric[-1].append((stoi[char]+3 if char in stoi else 2) if True else 2+random.randint(0, len(itos)))
-      return numeric
+    numeric = [[]]
+    for char in word:
+        numeric[-1].append((stoi[char]+3 if char in stoi else 2) if True else 2+random.randint(0, len(itos)))
+    return numeric
 
 # evaluate model
 rnn_drop.train(False)
-#rnn_forward_drop.train(False)
-#rnn_backward_drop.train(False)
-
-#baseline_rnn_encoder_drop.train(False)
 
 # computes loss
 lossModule = torch.nn.NLLLoss(reduction='none', ignore_index=0)
 
 
 def choice(numeric1, numeric2):
-     assert len(numeric1) == 1
-     assert len(numeric2) == 1
-     numeric = [numeric1[0], numeric2[0]]
-     maxLength = max([len(x) for x in numeric])
-     for i in range(len(numeric)):
+    assert len(numeric1) == 1
+    assert len(numeric2) == 1
+    numeric = [numeric1[0], numeric2[0]]
+    maxLength = max([len(x) for x in numeric])
+    for i in range(len(numeric)):
         while len(numeric[i]) < maxLength:
-              numeric[i].append(0)
-     input_tensor_forward = torch.tensor([[0]+x for x in numeric], dtype=torch.long, device=device, requires_grad=False).transpose(0,1)
-     
-     target = input_tensor_forward[1:]
-     input_cut = input_tensor_forward[:-1]
-     embedded_forward = char_embeddings(input_cut)
-     out_forward, hidden_forward = rnn_drop(embedded_forward, None)
+            numeric[i].append(0)
+    input_tensor_forward = torch.tensor([[0]+x for x in numeric], dtype=torch.long, device=device, requires_grad=False).transpose(0,1)
+    
+    target = input_tensor_forward[1:]
+    input_cut = input_tensor_forward[:-1]
+    embedded_forward = char_embeddings(input_cut)
+    out_forward, hidden_forward = rnn_drop(embedded_forward, None)
+    
+    prediction = logsoftmax(output(out_forward))
 
-     prediction = logsoftmax(output(out_forward)) #.data.cpu().view(-1, 3+len(itos)).numpy() #.view(1,1,-1))).view(3+len(itos)).data.cpu().numpy()
-     losses = lossModule(prediction.reshape(-1, len(itos)+3), target.view(-1)).reshape(maxLength, 2)
-     # losses = losses.sum(0).data.cpu().numpy()
-     losses = losses.sum(0).data.to(device).numpy()
-     return losses
-
+    losses = lossModule(prediction.reshape(-1, len(itos)+3), target.reshape(-1)).reshape(maxLength, 2)
+    losses = losses.sum(0).data.cpu().numpy()
+    return losses
 
 
 def choiceList(numeric):
-     for x in numeric:
-       assert len(x) == 1
-#     assert len(numeric1) == 1
- #    assert len(numeric2) == 1
-     numeric = [x[0] for x in numeric] #, numeric2[0]]
-     maxLength = max([len(x) for x in numeric])
-     for i in range(len(numeric)):
+    for x in numeric:
+        assert len(x) == 1
+    numeric = [x[0] for x in numeric]
+    maxLength = max([len(x) for x in numeric])
+    for i in range(len(numeric)):
         while len(numeric[i]) < maxLength:
-              numeric[i].append(0)
-     input_tensor_forward = torch.tensor([[0]+x for x in numeric], dtype = torch.long, device=device, requires_grad=False).transpose(0,1)
+            numeric[i].append(0)
+    input_tensor_forward = torch.tensor([[0]+x for x in numeric], dtype = torch.long, device=device, requires_grad=False).transpose(0,1)
      
-     target = input_tensor_forward[1:]
-     input_cut = input_tensor_forward[:-1]
-     embedded_forward = char_embeddings(input_cut)
-     out_forward, hidden_forward = rnn_drop(embedded_forward, None)
-
-     prediction = logsoftmax(output(out_forward)) #.data.cpu().view(-1, 3+len(itos)).numpy() #.view(1,1,-1))).view(3+len(itos)).data.cpu().numpy()
-     losses = lossModule(prediction.reshape(-1, len(itos)+3), target.reshape(-1)).view(maxLength, len(numeric))
-     # losses = losses.sum(0).data.cpu().numpy()
-     losses = losses.sum(0).data.to(device).numpy()
-     return losses
-
+    target = input_tensor_forward[1:]
+    input_cut = input_tensor_forward[:-1]
+    embedded_forward = char_embeddings(input_cut)
+    out_forward, hidden_forward = rnn_drop(embedded_forward, None)
+    
+    prediction = logsoftmax(output(out_forward))
+    losses = lossModule(prediction.reshape(-1, len(itos)+3), target.reshape(-1)).reshape(maxLength, len(numeric))
+    losses = losses.sum(0).data.cpu().numpy()
+    return losses
 
 
 def encodeSequenceBatchForward(numeric):
-#    input_tensor_forward = Variable(torch.LongTensor([[0]+x for x in numeric]).transpose(0,1).cuda(), requires_grad=False)
     input_tensor_forward = torch.tensor([[0]+x for x in numeric], dtype=torch.long, device=device, requires_grad=False).transpose(0,1)
-#      target_tensor_forward = Variable(torch.LongTensor(numeric).transpose(0,1)[2:].cuda(), requires_grad=False).view(args.sequence_length+1, len(numeric), 1, 1)
     embedded_forward = char_embeddings(input_tensor_forward)
     out_forward, hidden_forward = rnn_drop(embedded_forward, None)
-#      out_forward = out_forward.view(args.sequence_length+1, len(numeric), -1)
- #     logits_forward = output(out_forward) 
-  #    log_probs_forward = logsoftmax(logits_forward)
+    
     return (out_forward[-1], hidden_forward)
 
 
-
 def encodeSequenceBatchBackward(numeric):
-#      print([itos[x-3] for x in numeric[0]])
-#      print([[0]+(x[::-1]) for x in numeric])
-#    input_tensor_backward = Variable(torch.LongTensor([[0]+(x[::-1]) for x in numeric]).transpose(0,1).to(device), requires_grad=False)
     input_tensor_backward = torch.tensor([[0]+(x[::-1]) for x in numeric], dtype=torch.long, device=device, requires_grad=False).transpose(0,1)
-#      target_tensor_backward = Variable(torch.LongTensor([x[::-1] for x in numeric]).transpose(0,1)[:-2].cuda(), requires_grad=False).view(args.sequence_length+1, len(numeric), 1, 1)
     embedded_backward = char_embeddings(input_tensor_backward)
     out_backward, hidden_backward = rnn_backward_drop(embedded_backward, None)
-#      out_backward = out_backward.view(args.sequence_length+1, len(numeric), -1)
-#      logits_backward = output(out_backward) 
-#      log_probs_backward = logsoftmax(logits_backward)
 
     return (out_backward[-1], hidden_backward)
 
-
 def predictNext(encoded, preventBoundary=True):
-     out, hidden = encoded
-     # prediction = logsoftmax(output(out.unsqueeze(0))).data.cpu().view(3+len(itos)).numpy() #.view(1,1,-1))).view(3+len(itos)).data.cpu().numpy()
-     prediction = logsoftmax(output(out.unsqueeze(0))).data.to(device).view(3+len(itos)).numpy() #.view(1,1,-1))).view(3+len(itos)).data.cpu().numpy()
-     predicted = np.argmax(prediction[:-1] if preventBoundary else prediction)
-     return itos[predicted-3] #, prediction
+    out, hidden = encoded
+    prediction = logsoftmax(output(out.unsqueeze(0))).data.cpu().view(3+len(itos)).numpy() 
+    predicted = np.argmax(prediction[:-1] if preventBoundary else prediction)
+    return itos[predicted-3] 
 
 def keepGenerating(encoded, length=100, backwards=False):
     out, hidden = encoded
@@ -228,9 +202,7 @@ def keepGenerating(encoded, length=100, backwards=False):
 #    rnn_forward_drop.train(True)
 
     for _ in range(length):
-        # prediction = logsoftmax(2*output(out.unsqueeze(0))).data.cpu().view(3+len(itos)).numpy()
-        prediction = logsoftmax(2*output(out.unsqueeze(0))).data.to(device).view(3+len(itos)).numpy() #.view(1,1,-1))).view(3+len(itos)).data.cpu().numpy()
-#      predicted = np.argmax(prediction).items()
+        prediction = logsoftmax(2*output(out.unsqueeze(0))).data.cpu().view(3+len(itos)).numpy() 
         predicted = np.random.choice(3+len(itos), p=np.exp(prediction))
         output_string += itos[predicted-3]
 
@@ -240,36 +212,30 @@ def keepGenerating(encoded, length=100, backwards=False):
         out, hidden = (rnn_drop if not backwards else rnn_backward_drop)(embedded_forward, hidden)
         out = out[-1]
 
- #   rnn_forward_drop.train(False)
-
     return output_string if not backwards else output_string[::-1]
 
 
 out1, hidden1 = encodeSequenceBatchForward(encodeWord("katze"))
 out2, hidden2 = encodeSequenceBatchForward(encodeWord("katzem"))
-#print(torch.dot(out1[-1], out2[-1]))
-#print(torch.dot(hidden1[0], hidden2[0]))
-#print(torch.dot(hidden1[1], hidden2[1]))
+
 
 def doChoiceList(xs, printHere=True):
     if printHere:
-      for x in xs:
-         print(x)
+        for x in xs:
+            print(x)
     losses = choiceList([encodeWord(x.split(" ")) for x in xs]) #, encodeWord(y))
     if printHere:
-      print(losses)
+        print(losses)
     return np.argmin(losses)
 
 def doChoiceListLosses(xs, printHere=True):
     if printHere:
-      for x in xs:
-         print(x)
+        for x in xs:
+            print(x)
     losses = choiceList([encodeWord(x.split(" ")) for x in xs]) #, encodeWord(y))
     if printHere:
-      print(losses)
+        print(losses)
     return losses
-
-
 
 def doChoice(x, y):
     print(x)
@@ -280,46 +246,30 @@ def doChoice(x, y):
 
 
 def genderTest(mode):
-    # creates a dico with genders
-   genders = dict([("Gender="+x, set()) for x in ["Masc", "Fem", "Neut"]])
-              
-   #print(genders)
-   counter = 0
 
-   results = [[0,0,0] for _ in range(3)]
-   for genderIndex, gender in enumerate(["Gender="+x for x in ["Masc", "Fem", "Neut"]]):
-     with open(f"stimuli/german-gender-{gender}-{mode}-noOOVs.txt", "r") as inFile:
-       counter = 0
-       while True:
-         counter += 1
-     #    adverbs = ["sehr"]
-      #   adjective = "" #"".join(adverbs)+random.choice(adjectives)+"e"
+    genders = dict([("Gender="+x, set()) for x in ["Masc", "Fem", "Neut"]])
+    counter = 0
+    results = [[0,0,0] for _ in range(3)]
+    for genderIndex, gender in enumerate(["Gender="+x for x in ["Masc", "Fem", "Neut"]]):
+        with open(f"stimuli/german-gender-{gender}-{mode}-noOOVs.txt", "r") as inFile:
+            counter = 0
+            while True:
+                counter += 1
+                try:
+                    stimulusDer = next(inFile).strip()
+                except StopIteration:
+                    break
+                stimulusDie = next(inFile).strip()
+                stimulusDas = next(inFile).strip()
 
-         try:
-            stimulusDer = next(inFile).strip()
-         except StopIteration:
-            break
-         stimulusDie = next(inFile).strip()
-         stimulusDas = next(inFile).strip()
-
- 
-  #       noun = f"{adjective}{noun}"
-         results[genderIndex][doChoiceList([f". {stimulusDer} .", f". {stimulusDie} .", f". {stimulusDas} ."], printHere=(random.random() > 0.98))] += 1
-         if random.random() > 0.98:
-           print([[round(x/(counter if genderIndex == i else 1), 2) for x in results[i]] for i in range(len(results))])
-       results[genderIndex] = [x/counter for x in results[genderIndex]]
-   return results
+                results[genderIndex][doChoiceList([f". {stimulusDer} .", f". {stimulusDie} .", f". {stimulusDas} ."], printHere=(random.random() > 0.98))] += 1
+                if random.random() > 0.98:
+                    print([[round(x/(counter if genderIndex == i else 1), 2) for x in results[i]] for i in range(len(results))])
+            results[genderIndex] = [x/counter for x in results[genderIndex]]
+        
+    return results
 
 
-#   # test separation of feminine from masc/neuter via indefinite
-#   results = [0,0,0] 
-#   for noun in genders["Gender=Masc"].union(genders["Gender=Neut"]):
-#       counter += 1
-##       results[doChoiceList([".der"+noun+".", ".die"+noun+".", ".das"+noun+"."])] += 1
-#       results[doChoiceList([".ein"+noun+".", ".eine"+noun+"."])] += 1
-#       print([x/counter for x in results])
-#   return [x/counter for x in results]
-#
 confusion1 = genderTest("nothing")
 confusion2 = genderTest("adjective")
 confusion3 = genderTest("sehr + adjective")
@@ -329,7 +279,6 @@ print(confusion1)
 print(confusion2)
 print(confusion3)
 print(confusion4)
-
 
 losses = (doChoiceListLosses([". der", ". die", ". das"]))
 losses = np.exp(-losses)

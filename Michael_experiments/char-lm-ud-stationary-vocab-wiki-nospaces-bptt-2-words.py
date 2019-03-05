@@ -75,7 +75,7 @@ logsoftmax = torch.nn.LogSoftmax(dim=2)
 
 train_loss = torch.nn.NLLLoss(ignore_index=0)
 print_loss = torch.nn.NLLLoss(size_average=False, reduce=False, ignore_index=0)
-char_dropout = torch.nn.Dropout2d(p=args.char_dropout_prob)
+char_dropout = torch.nn.Dropout2d(p=args.char_dropout_prob)  # FIXME: a mettre quand on call le modele
 
 modules = [rnn, output, char_embeddings]
 def parameters():
@@ -85,10 +85,11 @@ def parameters():
 
 parameters_cached = [x for x in parameters()]
 
-
+# FIXME : definir le modele
+model.train()
 learning_rate = args.learning_rate
 
-optim = torch.optim.SGD(parameters(), lr=learning_rate, momentum=0.0) # 0.02, 0.9
+optim = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.0) # 0.02, 0.9
 
 named_modules = {"rnn" : rnn, "output" : output, "char_embeddings" : char_embeddings, "optim" : optim}
 
@@ -100,7 +101,6 @@ if args.load_from is not None:
 
 # ([0] + [stoi[training_data[x]]+1 for x in range(b, b+sequence_length) if x < len(training_data)]) 
 
-#from embed_regularize import embedded_dropout
 
 
 def prepareDatasetChunks(data, train=True):
@@ -189,6 +189,8 @@ hidden = None
 zeroBeginning = torch.LongTensor([0 for _ in range(args.batchSize)]).to(device).view(1,args.batchSize)
 beginning = None
 
+
+# FIXME: WTF, use the forward from the model
 def forward(numeric, train=True, printHere=False):
       global hidden
       global beginning
@@ -243,6 +245,7 @@ def forward(numeric, train=True, printHere=False):
             print((losses[i][0], itos[numericCPU[i+1][0]-3]))
       return loss, target_tensor.view(-1).size()[0]
 
+# FIXME: WTF, use the optimizer
 def backward(loss, printHere):
       optim.zero_grad()
       if printHere:
@@ -260,7 +263,7 @@ totalStartTime = time.time()
 devLosses = []
 for epoch in range(10000):
    print(epoch)
-   training_data =
+   training_data = # FIXME: voir le code du mec
 
    .training(args.language)
    print("Got data")

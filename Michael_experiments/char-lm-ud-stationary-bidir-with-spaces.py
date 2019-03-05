@@ -1,35 +1,39 @@
-from paths import LOG_HOME
-from paths import MODELS_HOME
-
 import argparse
-parser = argparse.ArgumentParser()
-parser.add_argument("--language", dest="language", type=str)
-parser.add_argument("--load-from", dest="load_from", type=str)
-parser.add_argument("--save-to", dest="save_to", type=str)
-
 import random
+import time
 
-parser.add_argument("--batchSize", type=int, default=16)
-parser.add_argument("--char_embedding_size", type=int, default=100)
-parser.add_argument("--hidden_dim", type=int, default=1024)
-parser.add_argument("--layer_num", type=int, default=1)
-parser.add_argument("--weight_dropout_in", type=float, default=0.01)
-parser.add_argument("--weight_dropout_hidden", type=float, default=0.1)
-parser.add_argument("--char_dropout_prob", type=float, default=0.33)
-parser.add_argument("--char_noise_prob", type = float, default= 0.01)
-parser.add_argument("--learning_rate", type = float, default= 0.1)
-parser.add_argument("--myID", type=int, default=random.randint(0,1000000000))
-parser.add_argument("--sequence_length", type=int, default=50)
+import torch
 
-
-args=parser.parse_args()
-print(args)
-
-
-
-
-
+from weight_drop import WeightDrop
+from paths import MODELS_HOME, LOG_HOME
 from corpusIterator import CorpusIterator
+
+def get_args(*input_args):
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--language", dest="language", type=str)
+    parser.add_argument("--load-from", dest="load_from", type=str)
+    parser.add_argument("--save-to", dest="save_to", type=str)
+
+    parser.add_argument("--batchSize", type=int, default=16)
+    parser.add_argument("--char_embedding_size", type=int, default=100)
+    parser.add_argument("--hidden_dim", type=int, default=1024)
+    parser.add_argument("--layer_num", type=int, default=1)
+    parser.add_argument("--weight_dropout_in", type=float, default=0.01)
+    parser.add_argument("--weight_dropout_hidden", type=float, default=0.1)
+    parser.add_argument("--char_dropout_prob", type=float, default=0.33)
+    parser.add_argument("--char_noise_prob", type = float, default= 0.01)
+    parser.add_argument("--learning_rate", type = float, default= 0.1)
+    parser.add_argument("--myID", type=int, default=random.randint(0,1000000000))
+    parser.add_argument("--sequence_length", type=int, default=50)
+
+    args = parser.parse_args()
+    print(args)
+    return args
+
+
+
+
+
 training = CorpusIterator(args.language, partition="train", storeMorph=False, removePunctuation=True)
 dev = CorpusIterator(args.language, partition="dev", storeMorph=False, removePunctuation=True)
 
@@ -56,20 +60,13 @@ except FileNotFoundError:
        print("\n".join(itos), file=outFile)
 #itos = sorted(itos)
 itos.append(" ")
-print(itos)
 stoi = dict([(itos[i],i) for i in range(len(itos))])
 
 
 
 
-import random
-
-
-import torch
-
 print(torch.__version__)
 
-from weight_drop import WeightDrop
 
 
 rnn = torch.nn.LSTM(args.char_embedding_size, args.hidden_dim, args.layer_num, bidirectional=True).cuda()
@@ -106,12 +103,10 @@ if args.load_from is not None:
   for name, module in named_modules.items():
       module.load_state_dict(checkpoint[name])
 
-from torch.autograd import Variable
 
 
 # ([0] + [stoi[training_data[x]]+1 for x in range(b, b+sequence_length) if x < len(training_data)]) 
 
-#from embed_regularize import embedded_dropout
 
 
 def prepareDataset(data, train=True):
@@ -196,7 +191,6 @@ def backward(loss, printHere):
 
 
 
-import time
 
 devLosses = []
 for epoch in range(10000):
