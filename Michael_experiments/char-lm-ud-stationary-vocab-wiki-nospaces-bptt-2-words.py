@@ -203,7 +203,9 @@ def forward(numeric, train=True, printHere=False):
 
       input_tensor = Variable(numeric[:-1], requires_grad=False)
       target_tensor = Variable(numeric[1:], requires_grad=False)
-      
+
+      # FIXME
+      model.forward(input_tensor)
 
     #  print(char_embeddings)
       #if train and (embedding_full_dropout_prob is not None):
@@ -219,9 +221,6 @@ def forward(numeric, train=True, printHere=False):
 
       logits = output(out) 
       log_probs = logsoftmax(logits)
-   #   print(logits)
-  #    print(log_probs)
- #     print(target_tensor)
 
       
       loss = train_loss(log_probs.view(-1, len(itos)+3), target_tensor.view(-1))
@@ -328,7 +327,6 @@ for epoch in range(10000):
        dev_char_count += numberOfCharacters
    devLosses.append(dev_loss/dev_char_count)
    print(devLosses)
-#   quit()
    with open(LOG_HOME+"/"+args.language+"_"+__file__+"_"+str(args.myID), "w") as outFile:
       print(" ".join([str(x) for x in devLosses]), file=outFile)
       print(" ".join(sys.argv), file=outFile)

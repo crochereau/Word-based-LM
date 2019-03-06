@@ -108,8 +108,6 @@ def main():
     """
     # ### Checking what the max log probabilities are and to which words they correspond
 
-    # In[70]:
-
     # to finish
     max_probs_values, max_probs_idx = torch.max(log_prediction, 2)
     print(max_probs_values.size(), max_probs_idx.size())
