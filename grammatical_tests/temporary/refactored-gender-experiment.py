@@ -4,12 +4,10 @@ from paths import WIKIPEDIA_HOME
 from paths import MODELS_HOME
 
 import argparse
-import corpusIteratorWikiWords
 import random
 import torch
 from weight_drop import WeightDrop
 import numpy as np
-from corpusIterator import CorpusIterator
 print(torch.__version__)
 
 parser = argparse.ArgumentParser()
@@ -186,9 +184,6 @@ def doChoiceListLosses(xs, printHere=True):
 
 def genderTest(mode):
 
-    genders = dict([("Gender="+x, set()) for x in ["Masc", "Fem", "Neut"]])
-
-    counter = 0
     results = [[0,0,0] for _ in range(3)]
     for genderIndex, gender in enumerate(["Gender="+x for x in ["Masc", "Fem", "Neut"]]):
         
