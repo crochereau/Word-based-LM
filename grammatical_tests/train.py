@@ -1,44 +1,54 @@
-# FIXME: Correspond a char-lm-ud-stationary-bidir-with-spaces
-# Qui n'est pas le bon fichier mais sans doute une bonne base
+"""Train LM"""
 
 import argparse
 import random
+import sys
 import time
 
+import tqdm
 import torch
+import torch.nn as nn
 
-from weight_drop import WeightDrop
-from paths import MODELS_HOME, LOG_HOME
-from corpusIterator import CorpusIterator
+from paths import LOG_HOME
+from paths import MODELS_HOME
+from utils import generate_vocab_mappings, load_WordNLM_model
+from train_data_functions import prepare_dataset_chunks
+from model import WordNLM
+import corpus_iterator_wiki
+
+CHAR_VOCABS = {"german": "vocabularies/german-wiki-word-vocab-50000.txt",
+               "italian": "vocabularies/italian-wiki-word-vocab-50000.txt",
+               "english": "vocabularies/english-wiki-word-vocab-50000.txt"}
+
 
 def get_args(*input_args):
     parser = argparse.ArgumentParser()
     parser.add_argument("--language", dest="language", type=str)
     parser.add_argument("--load-from", dest="load_from", type=str)
     parser.add_argument("--save-to", dest="save_to", type=str)
+    parser.add_argument("--batch_size", type=int, default=random.choice([128, 128, 128, 256]))
+    parser.add_argument("--char_embedding_size", type=int, default=random.choice([100, 200, 200, 300, 300, 300, 300, 1024]))
+    parser.add_argument("--hidden_dim", type=int, default=random.choice([1024]))
+    parser.add_argument("--layer_num", type=int, default=random.choice([1, 2]))
+    parser.add_argument("--weight_dropout_in", type=float, default=random.choice([0.0, 0.0, 0.0, 0.01]))
+    parser.add_argument("--weight_dropout_hidden", type=float, default=random.choice([0.0, 0.05, 0.15, 0.2]))
+    parser.add_argument("--char_dropout_prob", type=float, default=random.choice([0.0, 0.0, 0.001, 0.01, 0.01]))
+    parser.add_argument("--char_noise_prob", type = float, default=random.choice([0.0, 0.0]))
+    parser.add_argument("--learning_rate", type = float, default= random.choice([0.6, 0.7, 0.8, 0.9, 1.0,1.0,  1.1, 1.1, 1.2, 1.2, 1.2, 1.2, 1.3, 1.3, 1.4, 1.5, 1.6]))
+    parser.add_argument("--my_id", type=int, default=random.randint(0,1000000000))
+    parser.add_argument("--sequence_length", type=int, default=random.choice([50]))
+    parser.add_argument("--verbose", type=bool, default=False)
+    parser.add_argument("--lr_decay", type=float, default=random.choice([0.7, 0.9, 0.95, 0.98, 0.98, 1.0]))
 
-    parser.add_argument("--batchSize", type=int, default=16)
-    parser.add_argument("--char_embedding_size", type=int, default=100)
-    parser.add_argument("--hidden_dim", type=int, default=1024)
-    parser.add_argument("--layer_num", type=int, default=1)
-    parser.add_argument("--weight_dropout_in", type=float, default=0.01)
-    parser.add_argument("--weight_dropout_hidden", type=float, default=0.1)
-    parser.add_argument("--char_dropout_prob", type=float, default=0.33)
-    parser.add_argument("--char_noise_prob", type = float, default= 0.01)
-    parser.add_argument("--learning_rate", type = float, default= 0.1)
-    parser.add_argument("--myID", type=int, default=random.randint(0,1000000000))
-    parser.add_argument("--sequence_length", type=int, default=50)
+    args=parser.parse_args()
 
-    args = parser.parse_args()
+
+    if "MYID" in args.save_to:
+        args.save_to = args.save_to.replace("MYID", str(args.myID))
+
     print(args)
     return args
 
-
-
-
-
-training = CorpusIterator(args.language, partition="train", storeMorph=False, removePunctuation=True)
-dev = CorpusIterator(args.language, partition="dev", storeMorph=False, removePunctuation=True)
 
 def plus(it1, it2):
     for x in it1:
@@ -46,209 +56,131 @@ def plus(it1, it2):
     for x in it2:
         yield x
 
-try:
-    with open("/checkpoint/mhahn/char-vocab-"+args.language, "r") as inFile:
-        itos = inFile.read().strip().split("\n")
-except FileNotFoundError:
-    print("Creating new vocab")
-    char_counts = {}
-    # get symbol vocabulary
-    for sentence in plus(training.iterator(), dev.iterator()):
-        for line in sentence:
-            for char in line["word"]:
-                char_counts[char] = char_counts.get(char, 0) + 1
-    char_counts = [(x,y) for x, y in char_counts.items()]
-    itos = [x for x,y in sorted(char_counts, key=lambda z:(z[0],-z[1])) if y > 50]
-    with open("/checkpoint/mhahn/char-vocab-"+args.language, "w") as outFile:
-        print("\n".join(itos), file=outFile)
-#itos = sorted(itos)
-itos.append(" ")
-stoi = dict([(itos[i],i) for i in range(len(itos))])
 
+# FIXME: WTF, use the forward from the model
+def front_pass(model, numeric, criterion, hidden, beginning, train=True, print_here=False):
+    batch_size = len(numeric)   # Is this it?
+    zero_beginning = torch.zeros((1, args.batch_size)).to(device)
+    if hidden is None or (train and random.random() > 0.9):
+        hidden = None
+        beginning = zero_beginning
+    elif hidden is not None:
+        hidden = tuple(x.data.detach() for x in hidden)
 
+    numeric = torch.cat([beginning, numeric], dim=0).to(device=device)
+    beginning = numeric[numeric.size()[0]-1].view(1, args.batch_size)
 
+    input_tensor = numeric[:-1]
+    target_tensor = numeric[1:]
 
-print(torch.__version__)
-
-
-
-rnn = torch.nn.LSTM(args.char_embedding_size, args.hidden_dim, args.layer_num, bidirectional=True).cuda()
-
-rnn_parameter_names = [name for name, _ in rnn.named_parameters()]
-print(rnn_parameter_names)
-#quit()
-
-
-rnn_drop = WeightDrop(rnn, [(name, args.weight_dropout_in) for name, _ in rnn.named_parameters() if name.startswith("weight_ih_")] + [ (name, args.weight_dropout_hidden) for name, _ in rnn.named_parameters() if name.startswith("weight_hh_")])
-
-output = torch.nn.Linear(args.hidden_dim, len(itos)+3).cuda()
-
-char_embeddings = torch.nn.Embedding(num_embeddings=len(itos)+3, embedding_dim=args.char_embedding_size).cuda()
-
-logsoftmax = torch.nn.LogSoftmax(dim=3)
-
-train_loss = torch.nn.NLLLoss(ignore_index=0)
-print_loss = torch.nn.NLLLoss(size_average=False, reduce=False, ignore_index=0)
-char_dropout = torch.nn.Dropout2d(p=args.char_dropout_prob)
-
-modules = [rnn, output, char_embeddings]
-def parameters():
-    for module in modules:
-        for param in module.parameters():
-            yield param
-
-optim = torch.optim.SGD(parameters(), lr=args.learning_rate, momentum=0.0) # 0.02, 0.9
-
-named_modules = {"rnn" : rnn, "output" : output, "char_embeddings" : char_embeddings, "optim" : optim}
-
-if args.load_from is not None:
-    checkpoint = torch.load(MODELS_HOME+"/"+args.load_from+".pth.tar")
-    for name, module in named_modules.items():
-        module.load_state_dict(checkpoint[name])
-
-
-
-# ([0] + [stoi[training_data[x]]+1 for x in range(b, b+sequence_length) if x < len(training_data)])
-
-
-
-def prepareDataset(data, train=True):
-    data = list(data)
-    random.shuffle(data)
-    boundaries = [[]]
-    numeric = [[0,0]]
-    for sentence in data:
-        for word in sentence:
-            for char in (word["word"]+" "):
-                numeric[-1].append((stoi[char]+3 if char in stoi else 2) if (not train) or random.random() > args.char_noise_prob else 2+random.randint(0, len(itos)))
-                if len(numeric[-1]) > args.sequence_length:
-                    assert len(numeric[-1]) == args.sequence_length+1
-                    numeric[-1].append(0)
-                    numeric[-1].append(0)
-                    numeric.append([0,0])
-                    boundaries.append([])
-            boundaries[-1].append(len(numeric[-1]))
-        numeric[-1].append(1)
-        if len(numeric[-1]) > args.sequence_length:
-            assert len(numeric[-1]) == args.sequence_length+1
-            numeric[-1].append(0)
-            numeric[-1].append(0)
-            numeric.append([0,0])
-            boundaries.append([])
-        boundaries[-1].append(len(numeric[-1]))
-    numeric[-1] = numeric[-1] + ([0]*(args.sequence_length + 3 - len(numeric[-1])))
-    assert len(numeric[-1]) == args.sequence_length + 3
-    result= list(zip(numeric, boundaries))
-    random.shuffle(result)
-    return result
-
-def forward(numericAndBoundaries, train=True, printHere=False):
-    # print(numeric)
-    numeric, boundaries = zip(*numericAndBoundaries)
-    input_tensor = Variable(torch.LongTensor(numeric).transpose(0,1)[1:-1].cuda(), requires_grad=False)
-    target_tensor_forward = Variable(torch.LongTensor(numeric).transpose(0,1)[2:].cuda(), requires_grad=False).view(args.sequence_length+1, len(numeric), 1, 1)
-    target_tensor_backward = Variable(torch.LongTensor(numeric).transpose(0,1)[:-2].cuda(), requires_grad=False).view(args.sequence_length+1, len(numeric), 1, 1)
-    target_tensor = torch.cat([target_tensor_forward, target_tensor_backward], dim=2)
-
-    #  print(char_embeddings)
-    #if train and (embedding_full_dropout_prob is not None):
-    #   embedded = embedded_dropout(char_embeddings, input_tensor, dropout=embedding_full_dropout_prob, scale=None) #char_embeddings(input_tensor)
-    #else:
-    embedded = char_embeddings(input_tensor)
-    if train:
-        embedded = char_dropout(embedded)
-
-    out, _ = rnn_drop(embedded, None)
-    out = out.view(args.sequence_length+1, len(numeric), 2, -1)
-    #      if train:
-    #          out = dropout(out)
-
-    logits = output(out)
-    log_probs = logsoftmax(logits)
-    #   print(logits)
-    #    print(log_probs)
-    #     print(target_tensor)
-
-    loss = train_loss(log_probs.view(-1, len(itos)+3), target_tensor.view(-1))
-
-    if printHere:
-        lossTensor = print_loss(log_probs.view(-1, len(itos)+3), target_tensor.view(-1)).view(args.sequence_length+1, len(numeric), 2)
+    log_probs = model.forward(input_tensor)
+    loss = criterion(log_probs.view(-1, len(itos)), target_tensor.view(-1))
+    """
+    if print_here:
+        lossTensor = print_loss(log_probs.view(-1, len(itos)+3), target_tensor.view(-1)).view(-1, args.batchSize)
         losses = lossTensor.data.cpu().numpy()
-        boundaries_index = [0 for _ in numeric]
-        for i in range((args.sequence_length-1)-1):
-            if boundaries_index[0] < len(boundaries[0]) and i+1 == boundaries[0][boundaries_index[0]]:
-                boundary = True
-                boundaries_index[0] += 1
-            else:
-                boundary = False
-            print((losses[i][0][0], losses[i][0][1], itos[numeric[0][i+1]-3], boundary))
-    return loss, len(numeric) * args.sequence_length
+        numericCPU = numeric.cpu().data.numpy()
+        print(("NONE", itos[numericCPU[0][0]-3]))
+        for i in range((args.sequence_length)):
+            print((losses[i][0], itos[numericCPU[i+1][0]-3]))
+    """
+    return loss, target_tensor.view(-1).size()[0], hidden, beginning
 
-def backward(loss, printHere):
+
+def run_epoch_train(optim, model, criterion, training_chars):
     optim.zero_grad()
-    if printHere:
-        print(loss)
-    loss.backward()
-    optim.step()
+    start_time = time.time()
+    train_chars = 0
+    hidden, beginning = None, None
+    loss_has_been_bad = 0
+    for counter, numeric in enumerate(training_chars):
+        print_here = (counter % 50 == 0)
+        loss, char_counts, hidden, beginning = front_pass(model, numeric, criterion, hidden, beginning,
+                                                          print_here=print_here, train=True)
+        loss.backward()
+        nn.utils.clip_grad_value_(model.parameters(), 5.0)
+        optim.step()
+
+        if loss > 15:
+            loss_has_been_bad += 1
+        else:
+            loss_has_been_bad = 0
+        if loss_has_been_bad > 100:
+            print("Loss exploding, has been bad for a while")
+            print(loss)
+            quit()
+        train_chars += char_counts
+        if print_here:
+            print(f"Counter {counter}, loss {loss}")
+            print(f"Chars per sec {train_chars/(time.time()-start_time)}")
+    return loss_has_been_bad
 
 
-
-
-
-devLosses = []
-for epoch in range(10000):
-    print(epoch)
-    training_data = training.iterator()
-    numericAndBoundaries = prepareDataset(training_data, train=True)
-
-
-
-
-    #   oldParameters = {}
-    #   for name, param in rnn.named_parameters():
-    #      oldParameters[name] = param
-    #      setattr(rnn, name, torch.nn.functional.dropout(param, p=weight_dropout))
-    #      print(name, param.size())
-    #
-
-    rnn_drop.train(True)
-    startTime = time.time()
-    trainChars = 0
-    for offset in range(0, len(numericAndBoundaries), args.batchSize):
-        printHere = (int(offset/args.batchSize) % 50 == 0)
-        loss, charCounts = forward(numericAndBoundaries[offset:offset+args.batchSize], printHere=printHere, train=True)
-        backward(loss, printHere)
-        trainChars += charCounts
-        if printHere:
-            print("Dev losses")
-            print(devLosses)
-            print("Chars per sec "+str(trainChars/(time.time()-startTime)))
-
-    rnn_drop.train(False)
-    #   for name, param in rnn.named_parameters():
-    #      setattr(rnn, name, oldParameters[name])
-
-
-
+def run_epoch_eval(model, criterion, dev_chars):
     dev_loss = 0
     dev_char_count = 0
-    dev_data = dev.iterator()
-    numericAndBoundaries = prepareDataset(dev_data, train=False)
-
-    for offset in range(0, len(numericAndBoundaries), args.batchSize):
-        printHere = (int(offset/args.batchSize) % 10 == 0)
-        loss, numberOfCharacters = forward(numericAndBoundaries[offset:offset+args.batchSize], printHere=printHere, train=False)
-        dev_loss += numberOfCharacters * loss.cpu().data.numpy()[0]
-        dev_char_count += numberOfCharacters
-    devLosses.append(dev_loss/dev_char_count)
-    print(devLosses)
-    with open(LOG_HOME+"/"+args.language+"_"+__file__+"_"+str(args.myID), "w") as outFile:
-        print(" ".join([str(x) for x in devLosses]), file=outFile)
-
-    if len(devLosses) > 1 and devLosses[-1] > devLosses[-2]:
-        break
-    if args.save_to is not None:
-        torch.save(dict([(name, module.state_dict()) for name, module in named_modules.items()]), MODELS_HOME+"/"+args.save_to+".pth.tar")
+    hidden, beginning = None, None
+    for counter, numeric in enumerate(dev_chars):
+        print_here = (counter % 50 == 0)
+        loss, number_of_characters, hidden, beginning = front_pass(model, criterion, numeric, hidden, beginning,
+                                                                   print_here=print_here, train=False)
+        dev_loss += number_of_characters * loss.cpu().data.numpy()
+        dev_char_count += number_of_characters
+    dev_loss /= dev_char_count
+    print(f"Loss of {dev_loss}")
+    return dev_loss
 
 
+def main():
+    args = get_args()
+    char_vocab_path = CHAR_VOCABS[args.language]
+    itos, stoi = generate_vocab_mappings(char_vocab_path)
+    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    model = WordNLM(args.char_embedding_size, len(itos), args.hidden_dim, args.layer_num,
+                    args.weight_dropout_in, args.weight_dropout_hidden, args.char_dropout_prob)
+    model.to(device)
+    model.train()
+    criterion = nn.NLLLoss(ignore_index=0)
 
+    if args.load_from is not None:
+        weight_path = torch.load(MODELS_HOME+args.load_from+".pth.tar")
+        model = load_WordNLM_model(weight_path, model, device)
+
+    # FIXME: Recuperer l'optimizer?
+    learning_rate = args.learning_rate
+    optim = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.0)
+
+    total_start_time = time.time()
+    dev_losses = []
+    max_num_epochs = 10000
+    for epoch in tqdm.tqdm(range(max_num_epochs), total=max_num_epochs, desc="Doing epoch"):
+        training_data = corpus_iterator_wiki.training(args.language)
+        training_chars = prepare_dataset_chunks(training_data, stoi, args, device, train=True)
+        model.train()
+        run_epoch_train(optim, model, criterion, training_chars)
+
+        dev_data = corpus_iterator_wiki.dev(args.language)
+        dev_chars = prepare_dataset_chunks(dev_data, stoi, args, device, train=False)
+        model.eval()
+        dev_loss = run_epoch_eval(model, criterion, dev_chars)
+        dev_losses.append(dev_loss)
+
+        early_stop = len(dev_losses) > 1 and dev_losses[-1] > dev_losses[-2]
+        if early_stop:
+            print(f"Stopping training at epoch {epoch}")
+            break
+        if (time.time() - total_start_time) / 60 > 4200:
+            print("Breaking early to get some result within 72 hours")
+            break
+        if args.save_to is not None:
+            save_path = MODELS_HOME+"/"+args.save_to+".pth.tar"
+            torch.save(dict([(name, module.state_dict()) for name, module in named_modules.items()]), save_path)
+        with open(LOG_HOME+"/"+args.language+"_"+__file__+"_"+str(args.myID), "w") as out_file:
+            print(" ".join([str(x) for x in dev_losses]), file=out_file)
+            print(" ".join(sys.argv), file=out_file)
+            print(str(args), file=out_file)
+        # FIXME: Why is optimizer - Mention to dupoux
+        # Momentum peut pas marcher si pas 0
+        learning_rate *= args.lr_decay
+        # FIXME: Pk cette ligne?
+        optim = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.0)  # 0.02, 0.9
