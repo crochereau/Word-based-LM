@@ -1,26 +1,25 @@
 import numpy as np
+import tqdm
 
-from sentence_probabilities import compute_logprob, per_sentence_probabilities
-from utils import load_sentences, gender_tokenizer
+from get_sentence_probabilities import compute_logprob, per_sentence_probabilities
+from utils import load_sentences, gender_tokenizer, tokenizer
 
 
 def gender_test(gender_model, vocab_mapping, gender_device):
     """
     Args:
-        mode: intervening elements between article and noun: {"nothing, "adjective", "sehr + adjective",
-                                                                                "sehr + extrem + adjective"}
         gender_model: model tested
         vocab_mapping: dictionary mapping words to unique integers
-        gender_device: computing device
         gender_device: computing device
 
     Returns: confusion matrix containing the probabilities of predicting each gender
 
     """
-    gender_probs = np.zeros(shape=(4,3,3))
+    gender_probs = np.zeros(shape=(4, 3, 3))
 
     # load & tokenize stimuli
-    for mode_idx, mode in enumerate(("nothing", "adjective", "sehr + adjective", "sehr + extrem + adjective")):
+    modes = ("nothing", "adjective", "sehr + adjective", "sehr + extrem + adjective")
+    for mode_idx, mode in tqdm.tqdm(enumerate(modes), total=len(modes)):
         for gender_idx, gender in enumerate(["Gender=" + gender for gender in ["Masc", "Fem", "Neut"]]):
             gender_path = f"stimuli/german-gender-{gender}-{mode}-noOOVs.txt"
             gender_test_sentences = load_sentences(gender_path)
@@ -78,3 +77,37 @@ def gender_test(gender_model, vocab_mapping, gender_device):
             gender_probs[mode_idx][gender_idx][2] = das_prob
 
     return gender_probs
+
+
+def syntactic_test(syntactic_model, vocab_mapping, syntactic_device):
+    """
+    Args:
+        syntactic_model: model tested
+        vocab_mapping: dictionary mapping words to unique integers
+        syntactic_device: computing device
+
+    Returns: list of log probabilities assigned to each sentence
+
+    """
+
+    # load & tokenize stimuli
+    path = "input_sentences/ungrammatical_sentences.txt"
+    grammatical_test_sentences = load_sentences(path)
+    tokens = tokenizer(grammatical_test_sentences, vocab_mapping)
+
+    print("number of test sentences:", len(tokens))
+    # divide by 36 for grammatical sentences, by 108 o/w
+    print("number of original sentences:", len(tokens)/108)
+    print(tokens[0])
+
+    # Compute word log probabilities
+    numericalized_sentences, logprobs, losses = compute_logprob(tokens, syntactic_model,
+                                                                vocab_mapping, syntactic_device)
+    print("number of sentences:", len(numericalized_sentences))
+    print("shape of log probabilities prediction:", logprobs.shape)
+
+    # Compute sentence probabilities
+    probs = per_sentence_probabilities(numericalized_sentences, logprobs)
+
+    return probs
+

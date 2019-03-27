@@ -113,7 +113,6 @@ def run_epoch_train(optim, model, criterion, training_chars):
         if print_here:
             print(f"Counter {counter}, loss {loss}")
             print(f"Chars per sec {train_chars/(time.time()-start_time)}")
-    return loss_has_been_bad
 
 
 def run_epoch_eval(model, criterion, dev_chars):
@@ -162,6 +161,7 @@ def main():
         dev_data = corpus_iterator_wiki.dev(args.language)
         dev_chars = prepare_dataset_chunks(dev_data, stoi, args, device, train=False)
         model.eval()
+
         dev_loss = run_epoch_eval(model, criterion, dev_chars)
         dev_losses.append(dev_loss)
 
@@ -169,12 +169,12 @@ def main():
         if early_stop:
             print(f"Stopping training at epoch {epoch}")
             break
-        if (time.time() - total_start_time) / 60 > 4200:
-            print("Breaking early to get some result within 72 hours")
-            break
         if args.save_to is not None:
             save_path = MODELS_HOME+"/"+args.save_to+".pth.tar"
             torch.save(dict([(name, module.state_dict()) for name, module in named_modules.items()]), save_path)
+        if (time.time() - total_start_time) / 60 > 4200:
+            print("Breaking early to get some result within 72 hours")
+            break
         with open(LOG_HOME+"/"+args.language+"_"+__file__+"_"+str(args.myID), "w") as out_file:
             print(" ".join([str(x) for x in dev_losses]), file=out_file)
             print(" ".join(sys.argv), file=out_file)

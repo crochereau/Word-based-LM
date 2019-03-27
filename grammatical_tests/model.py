@@ -18,12 +18,12 @@ class WordNLM(nn.Module):
         self.char_dropout_prob = char_dropout_prob
 
         # Model architecture
-        self.char_embeddings = nn.Embedding(num_embeddings=self.vocab_size + 3, embedding_dim=self.char_embedding_size)
+        self.char_embeddings = nn.Embedding(num_embeddings=self.vocab_size, embedding_dim=self.char_embedding_size)
         self.char_dropout = nn.Dropout2d(p=self.char_dropout_prob)
         self.rnn = nn.LSTM(self.char_embedding_size, self.hidden_dim, self.layer_num)
         weight_drop_params = self.get_weigh_drop_parameters()
         self.rnn_drop = WeightDrop(self.rnn, weight_drop_params)
-        self.output = nn.Linear(self.hidden_dim, self.vocab_size + 3)
+        self.output = nn.Linear(self.hidden_dim, self.vocab_size)
 
     def get_weigh_drop_parameters(self):
         dropout_in = [(name, self.weight_dropout_in) for name, _ in self.rnn.named_parameters()
