@@ -201,6 +201,7 @@ def get_grammatical_permutations(args_nb, german_dict, nb_sentences, verb_args):
 
 def get_ungrammatical_permutations(args_nb, case_permutations, nb_sentences):
 
+    """
     # O : Nominative, 1 : Accusative, 2: Dative
     case_idxs = [0, 1, 2]
     nb_case_repeats = list(combinations_with_replacement(case_idxs, args_nb))
@@ -222,7 +223,11 @@ def get_ungrammatical_permutations(args_nb, case_permutations, nb_sentences):
     for idx, value in enumerate(idxs_permutations):
         for i in set(idxs_permutations[idx]):
             ungrammatical_idxs.append(i)
-    print("len ungrammatical idxs", len(ungrammatical_idxs))
+    """
+    # O : Nominative, 1 : Accusative, 2: Dative
+    ungrammatical_idxs = [(1, 0, 0), (0, 1, 0), (0, 0, 1), (0, 2, 0), (2, 0, 0), (0, 0, 2), (0, 1, 1), (1, 1, 0),
+                          (1, 0, 1),(1, 2, 1), (2, 1, 1), (1, 1, 2),(2, 2, 0), (2, 0, 2), (0, 2, 2),  (1, 2, 2),
+                          (2, 2, 1), (2, 1, 2)]
 
     # generate verb arguments ungrammatical combinations
     ungrammatical_combinations = [[[] for _ in range(len(ungrammatical_idxs))] for _ in range(nb_sentences)]
@@ -261,7 +266,7 @@ def generate_dataset(case_permutations, end_path, nb_sentences, tokens):
 
                 counter += 1
     counter = counter/nb_sentences
-    print("number of sentences:", counter)
+    print("number of generated sentences per original sentence:", counter)
 
     output_file = open(BASE_PATH + end_path, 'w')
     output_file.write(dataset)
@@ -272,7 +277,7 @@ def generate_dataset(case_permutations, end_path, nb_sentences, tokens):
 
 def main(verb_args_number):
 
-    sentences_w_number = load_sentences("input_sentences/refactored_sentences.txt")
+    sentences_w_number = load_sentences("input_sentences/input_dataset.txt")
     sentences_wo_number = sentences_w_number.replace('sg ', '').replace('pl ', '')
 
     de_nlp = spacy.load('de_core_news_sm')
@@ -285,11 +290,13 @@ def main(verb_args_number):
     list_sentences_wo_number = sentence_segmenter(doc_wo_number)
     assert len(list_sentences_w_number) == len(list_sentences_wo_number)
     sentences_nb = len(list_sentences_wo_number)
+    print("number of original sentences:", sentences_nb)
 
     tokens_w_nb = spacy_tokenizer(de_nlp, sentences_nb, list_sentences_w_number)
     tokens_wo_nb = spacy_tokenizer(de_nlp, sentences_nb, list_sentences_wo_number)
 
     args_w_nb = select_args_w_nb(verb_args_number, sentences_nb, tokens_w_nb)
+    print(args_w_nb)
 
     all_cases, grammatical_permutations = get_grammatical_permutations(verb_args_number,
                                                         de_dict, sentences_nb, args_w_nb)

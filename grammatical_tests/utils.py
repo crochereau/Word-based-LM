@@ -1,4 +1,6 @@
-import numpy as
+import pickle
+
+import numpy as np
 import pandas as pd
 import torch
 
@@ -21,7 +23,7 @@ def generate_german_dict(path):
     df = pd.read_csv(path)
     df = df[['lemma', 'genus', 'akkusativ singular', 'akkusativ singular 1', 'dativ singular',
              'dativ singular 1', 'genitiv singular', 'genitiv singular 1',
-             'nominativ plural', 'akkusativ plural', 'akkusativ plural 1', 'dativ plural',
+             'nominativ plural', 'nominativ plural 1', 'akkusativ plural', 'akkusativ plural 1', 'dativ plural',
              'dativ plural 1', 'genitiv plural', 'genitiv plural 1']]
     df = df.rename(columns={
         'lemma': 'nom sg',
@@ -32,6 +34,7 @@ def generate_german_dict(path):
         'genitiv singular': 'gen sg',
         'genitiv singular 1': 'gen1 sg',
         'nominativ plural': 'nom pl',
+        'nominativ plural 1': 'nom1 pl',
         'akkusativ plural': 'acc pl',
         'akkusativ plural 1': 'acc1 pl',
         'dativ plural': 'dat pl',
@@ -44,10 +47,11 @@ def generate_german_dict(path):
     df['acc sg'] = df['acc sg'] + df['acc1 sg']
     df['dat sg'] = df['dat sg'] + df['dat1 sg']
     df['gen sg'] = df['gen sg'] + df['gen1 sg']
+    df['nom pl'] = df['nom pl'] + df['nom1 pl']
     df['acc pl'] = df['acc pl'] + df['acc1 pl']
     df['dat pl'] = df['dat pl'] + df['dat1 pl']
     df['gen pl'] = df['gen pl'] + df['gen1 pl']
-    df = df.drop(['acc1 sg', 'dat1 sg', 'gen1 sg', 'acc1 pl', 'dat1 pl', 'gen1 pl'], axis=1)
+    df = df.drop(['acc1 sg', 'dat1 sg', 'gen1 sg', 'nom1 pl', 'acc1 pl', 'dat1 pl', 'gen1 pl'], axis=1)
     print(df.shape)
     german_dict = df.set_index('nom sg').T.to_dict('list')
     return german_dict
@@ -124,6 +128,38 @@ def load_WordNLM_model(weight_path, model, device):
         print(checkpoint[name].keys())
         module.load_state_dict(checkpoint[name])
     return model
+
+
+def pickle_dump(input_file, path):
+    """
+
+    Args:
+        input_file: file to save
+        path: where to save file
+
+    Returns:
+        dumped_file: saved file
+
+    """
+    with open(path, "wb") as fp:
+        dumped_file = pickle.dump(input_file, fp)
+    return dumped_file
+
+
+def pickle_load(path):
+    """
+
+    Args:
+        path: path to saved file
+
+    Returns:
+        loaded_file: loaded saved file
+
+    """
+    with open(path, "rb") as fp:
+        loaded_file = pickle.load(fp)
+
+    return loaded_file
 
 
 def tokenizer(sentences, word_to_idx):

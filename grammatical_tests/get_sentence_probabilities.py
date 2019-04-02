@@ -1,6 +1,9 @@
 import math
+import numpy as np
+#import tqdm
 
 import torch
+
 
 
 def compute_logprob(tokenized_sentences, model, vocab_mapping, device):
@@ -28,19 +31,26 @@ def compute_logprob(tokenized_sentences, model, vocab_mapping, device):
 
     input_tensor_forward = torch.tensor([[0]+x for x in tokenized_sentences], dtype=torch.long,
                                         device=device, requires_grad=False).transpose(0, 1)
+    print("input_tensor_forward done")
 
     target = input_tensor_forward[1:]
+    print("target done")
     input_cut = input_tensor_forward[:-1]
+    print("input_cut done")
 
     model.eval()
+    print("evaluation done")
     prediction = model(input_cut)
     predictions = prediction.detach().numpy()
+    print("predictions done")
     # predictions.shape = maxLength * number of sentences * vocabulary size
 
     loss_module = torch.nn.NLLLoss(reduction='none', ignore_index=0)
+    print("loss module")
     losses = loss_module(prediction.reshape(-1, len(vocab_mapping)),
                                         target.reshape(-1)).reshape(maxLength, len(tokenized_sentences))
     losses = losses.sum(0).data.cpu().numpy()
+    print("losses done")
 
     return tokenized_sentences, predictions, losses
 
@@ -71,5 +81,9 @@ def per_sentence_probabilities(padded_sentences, log_predictions):
     sentence_probs = []
     for i in range(len(word_log_probs)):
         sentence_probs.append(math.exp(sum(word_log_probs[i])))
+    sentence_probs = np.array(sentence_probs)
 
     return sentence_probs
+
+
+

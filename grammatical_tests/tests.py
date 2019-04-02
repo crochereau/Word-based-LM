@@ -5,7 +5,7 @@ from get_sentence_probabilities import compute_logprob, per_sentence_probabiliti
 from utils import load_sentences, gender_tokenizer, tokenizer
 
 
-def gender_test(gender_model, vocab_mapping, gender_device):
+def gender_test(gender_model, gender_device, vocab_mapping):
     """
     Args:
         gender_model: model tested
@@ -79,7 +79,7 @@ def gender_test(gender_model, vocab_mapping, gender_device):
     return gender_probs
 
 
-def syntactic_test(syntactic_model, vocab_mapping, syntactic_device):
+def syntactic_test(path, syntactic_model, syntactic_device, vocab_mapping):
     """
     Args:
         syntactic_model: model tested
@@ -91,23 +91,20 @@ def syntactic_test(syntactic_model, vocab_mapping, syntactic_device):
     """
 
     # load & tokenize stimuli
-    path = "input_sentences/ungrammatical_sentences.txt"
-    grammatical_test_sentences = load_sentences(path)
-    tokens = tokenizer(grammatical_test_sentences, vocab_mapping)
-
-    print("number of test sentences:", len(tokens))
-    # divide by 36 for grammatical sentences, by 108 o/w
-    print("number of original sentences:", len(tokens)/108)
-    print(tokens[0])
+    test_sentences = load_sentences(path)
+    tokens = tokenizer(test_sentences, vocab_mapping)
+    print("number of sentences:", len(tokens))
 
     # Compute word log probabilities
     numericalized_sentences, logprobs, losses = compute_logprob(tokens, syntactic_model,
                                                                 vocab_mapping, syntactic_device)
-    print("number of sentences:", len(numericalized_sentences))
+    sentences_nb = len(numericalized_sentences)
+    print("number of sentences:", sentences_nb)
     print("shape of log probabilities prediction:", logprobs.shape)
 
     # Compute sentence probabilities
     probs = per_sentence_probabilities(numericalized_sentences, logprobs)
+    assert len(probs) == sentences_nb
 
     return probs
 
