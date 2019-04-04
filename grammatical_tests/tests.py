@@ -96,6 +96,7 @@ def syntactic_test(path, syntactic_model, syntactic_device, vocab_mapping):
     print("number of sentences:", len(tokens))
 
     # Compute word log probabilities
+
     numericalized_sentences, logprobs, losses = compute_logprob(tokens, syntactic_model,
                                                                 vocab_mapping, syntactic_device)
     sentences_nb = len(numericalized_sentences)

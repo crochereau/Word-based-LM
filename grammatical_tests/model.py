@@ -21,6 +21,7 @@ class WordNLM(nn.Module):
         self.char_embeddings = nn.Embedding(num_embeddings=self.vocab_size, embedding_dim=self.char_embedding_size)
         self.char_dropout = nn.Dropout2d(p=self.char_dropout_prob)
         self.rnn = nn.LSTM(self.char_embedding_size, self.hidden_dim, self.layer_num)
+        self.rnn.flatten_parameters()
         weight_drop_params = self.get_weigh_drop_parameters()
         self.rnn_drop = WeightDrop(self.rnn, weight_drop_params)
         self.output = nn.Linear(self.hidden_dim, self.vocab_size)

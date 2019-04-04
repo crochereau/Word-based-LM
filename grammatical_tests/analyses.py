@@ -15,9 +15,12 @@ def relative_test(gram_probs, ungram_probs, nb_sentences):
 
     """
     stc_gram_probs = np.array([gram_probs[x:x + 36] for x in range(0, len(gram_probs), 36)])
+    print(stc_gram_probs.size, stc_gram_probs[0].size)
     stc_ungram_probs = np.array([ungram_probs[x:x + 108] for x in range(0, len(ungram_probs), 108)])
+    print(stc_ungram_probs.size, stc_ungram_probs[0].size)
     case_violations = np.array([[stc_ungram_probs[stc][x:x + 36] for x in range(0, len(stc_ungram_probs[stc]), 36)]
                                 for stc in range(len(stc_ungram_probs))])
+    print(case_violations.size, case_violations[0].size)
 
     stc_gram_sums = []
     for stc_idx in range(nb_sentences):
@@ -28,6 +31,7 @@ def relative_test(gram_probs, ungram_probs, nb_sentences):
     for stc_idx in range(nb_sentences):
         for case_violation_idx in range(3):
             tmp_sum = sum(case_violations[stc_idx][case_violation_idx])
+            # print(tmp_sum)
             case_violations_sums[stc_idx].append(tmp_sum)
 
     indicators = [[] for _ in range(nb_sentences)]

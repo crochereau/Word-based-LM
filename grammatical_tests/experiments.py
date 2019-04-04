@@ -15,14 +15,18 @@ from tests import gender_test, syntactic_test
 CHAR_VOCAB_PATH = "vocabularies/german-wiki-word-vocab-50000.txt"
 
 TEST_PATHS = {
-    "3_args_grammatical": "input_sentences/grammatical_sentences.txt",
-    "3_args_ungrammatical": "input_sentences/ungrammatical_sentences.txt"
+    "3_args_grammatical":"input_sentences/grammatical_sentences.txt",
+    "3_args_masc_grammatical":"input_sentences/masc_grammatical_sentences.txt",
+    "3_args_ungrammatical":"input_sentences/ungrammatical_sentences.txt",
+    "3_args_masc_ungrammatical":"input_sentences/masc_ungrammatical_sentences.txt"
               }
 
 RESULTS_PATHS = {
     "gender":"results/genders.txt",
     "3_args_grammatical":"results/3_gram_probs.txt",
-    "3_args_ungrammatical":"results/3_ungram_probs.txt"
+    "3_args_masc_grammatical":"results/3_masc_gram_probs.txt",
+    "3_args_ungrammatical":"results/3_ungram_probs.txt",
+    "3_args_masc_ungrammatical":"results/3_masc_ungram_probs.txt"
                  }
 TESTS = {
     "gender": gender_test,

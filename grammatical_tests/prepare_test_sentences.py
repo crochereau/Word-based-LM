@@ -6,8 +6,8 @@ from utils import generate_german_dict, load_sentences
 
 
 BASE_PATH = "input_sentences/"
-GRAMMATICAL_END = "grammatical_sentences.txt"
-UNGRAMMATICAL_END = "ungrammatical_sentences.txt"
+GRAMMATICAL_END = "masc_grammatical_sentences.txt"
+UNGRAMMATICAL_END = "masc_ungrammatical_sentences.txt"
 TEST_SENTENCES_PATH = BASE_PATH + "sentences.txt"
 
 
@@ -64,6 +64,8 @@ def get_nom(german_dict, group_args):
         pl_article = ""
         if article in {"der", "die", "das"}:
             pl_article = "die"
+        if article in {"dieser", "diese", "dieses"}:
+            pl_article = "diese"
         elif article in {"sein", "seine"}:
             pl_article = "seine"
         elif article in {"ihr", "ihre"}:
@@ -86,16 +88,18 @@ def get_acc(german_dict, group_args):
     number = group_args[2]
 
     if number == "sg":
+        sg_article = ""
         if gender == "m":
             if article == "der":
                 sg_article = "den"
+            elif article == "dieser":
+                sg_article = "diesen"
             elif article == "sein":
                 sg_article = "seinen"
             elif article == "ihr":
                 sg_article = "ihren"
             else:
                 sg_article = "einen"
-
         else:
             sg_article = article
 
@@ -107,6 +111,8 @@ def get_acc(german_dict, group_args):
         pl_article = ""
         if article in {"der", "die", "das"}:
             pl_article = "die"
+        elif article in {"dieser", "diese", "dieses"}:
+            pl_article = "diese"
         elif article in {"sein", "seine"}:
             pl_article = "seine"
         elif article in {"ihr", "ihre"}:
@@ -133,6 +139,8 @@ def get_dat(german_dict, group_args):
         if gender in {"m", "n"}:
             if article in {"der", "das"}:
                 sg_article = "dem"
+            elif article in {"dieser", "dieses"}:
+                sg_article = "diesem"
             elif article == "sein":
                 sg_article = "seinem"
             elif article == "ihr":
@@ -142,6 +150,8 @@ def get_dat(german_dict, group_args):
         elif gender == "f":
             if article == "die":
                 sg_article = "der"
+            elif article == "diese":
+                sg_article = "dieser"
             elif article == "seine":
                 sg_article = "seiner"
             elif article == "ihre":
@@ -156,6 +166,8 @@ def get_dat(german_dict, group_args):
         pl_article = ""
         if article in {"der", "die", "das"}:
             pl_article = "den"
+        elif article in {"dieser", "diese", "dieses"}:
+            pl_article = "diesen"
         elif article in {"sein", "seine"}:
             pl_article = "seinen"
         elif article in {"ihr", "ihre"}:
@@ -275,9 +287,9 @@ def generate_dataset(case_permutations, end_path, nb_sentences, tokens):
     return dataset
 
 
-def main(verb_args_number):
+def main(verb_args_number, input_path):
 
-    sentences_w_number = load_sentences("input_sentences/input_dataset.txt")
+    sentences_w_number = load_sentences(input_path)
     sentences_wo_number = sentences_w_number.replace('sg ', '').replace('pl ', '')
 
     de_nlp = spacy.load('de_core_news_sm')
@@ -308,5 +320,6 @@ def main(verb_args_number):
     return grammatical_dataset, ungrammatical_dataset
 
 
+
 if __name__ == "__main__":
-    main(3)
+    main(3, "input_sentences/masc_dataset.txt")
