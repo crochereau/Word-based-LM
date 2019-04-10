@@ -14,7 +14,7 @@ from paths import MODELS_HOME
 from utils import generate_vocab_mappings, load_WordNLM_model
 from train_data_functions import prepare_dataset_chunks
 from model import WordNLM
-import corpus_iterator_wiki
+import corpus_iterator_wiki_words
 
 CHAR_VOCABS = {"german": "vocabularies/german-wiki-word-vocab-50000.txt",
                "italian": "vocabularies/italian-wiki-word-vocab-50000.txt",
@@ -26,25 +26,24 @@ def get_args(*input_args):
     parser.add_argument("--language", dest="language", type=str)
     parser.add_argument("--load-from", dest="load_from", type=str)
     parser.add_argument("--save-to", dest="save_to", type=str)
-    parser.add_argument("--batch_size", type=int, default=random.choice([128, 128, 128, 256]))
-    parser.add_argument("--char_embedding_size", type=int, default=random.choice([100, 200, 200, 300, 300, 300, 300, 1024]))
+    parser.add_argument("--batch_size", type=int, default=128)
+    parser.add_argument("--word_embedding_size", type=int, default=random.choice([100, 200, 300]))
     parser.add_argument("--hidden_dim", type=int, default=random.choice([1024]))
     parser.add_argument("--layer_num", type=int, default=random.choice([1, 2]))
     parser.add_argument("--weight_dropout_in", type=float, default=random.choice([0.0, 0.0, 0.0, 0.01]))
-    parser.add_argument("--weight_dropout_hidden", type=float, default=random.choice([0.0, 0.05, 0.15, 0.2]))
+    parser.add_argument("--weight_dropout_hidden", type=float, default=random.choice([0.0, 0.05, 0.15, 0.2, 0.3, 0.4]))
     parser.add_argument("--char_dropout_prob", type=float, default=random.choice([0.0, 0.0, 0.001, 0.01, 0.01]))
-    parser.add_argument("--char_noise_prob", type = float, default=random.choice([0.0, 0.0]))
-    parser.add_argument("--learning_rate", type = float, default= random.choice([0.6, 0.7, 0.8, 0.9, 1.0,1.0,  1.1, 1.1, 1.2, 1.2, 1.2, 1.2, 1.3, 1.3, 1.4, 1.5, 1.6]))
+    parser.add_argument("--char_noise_prob", type = float, default=0)
+    parser.add_argument("--learning_rate", type = float, default= random.choice([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5]))
     parser.add_argument("--my_id", type=int, default=random.randint(0,1000000000))
-    parser.add_argument("--sequence_length", type=int, default=random.choice([50]))
+    parser.add_argument("--sequence_length", type=int, default=19)
     parser.add_argument("--verbose", type=bool, default=False)
-    parser.add_argument("--lr_decay", type=float, default=random.choice([0.7, 0.9, 0.95, 0.98, 0.98, 1.0]))
+    parser.add_argument("--lr_decay", type=float, default=random.choice([0.5, 0.6, 0.7, 0.9, 0.95, 0.98, 1.0]))
 
     args=parser.parse_args()
 
-
-    if "MYID" in args.save_to:
-        args.save_to = args.save_to.replace("MYID", str(args.myID))
+    if "my_id" in args.save_to:
+        args.save_to = args.save_to.replace("my_id", str(args.my_id))
 
     print(args)
     return args
@@ -57,10 +56,9 @@ def plus(it1, it2):
         yield x
 
 
-# FIXME: WTF, use the forward from the model
-def front_pass(model, numeric, criterion, hidden, beginning, train=True, print_here=False):
-    batch_size = len(numeric)   # Is this it?
-    zero_beginning = torch.zeros((1, args.batch_size)).to(device)
+def front_pass(args, device, model, numeric, criterion, hidden, beginning, vocab, print_here=False, train=True):
+    # batch_size = len(numeric)   # Is this it? # FIXME: remove line
+    zero_beginning = torch.zeros((1, args.batch_size), dtype=torch.long).to(device)
     if hidden is None or (train and random.random() > 0.9):
         hidden = None
         beginning = zero_beginning
@@ -74,7 +72,8 @@ def front_pass(model, numeric, criterion, hidden, beginning, train=True, print_h
     target_tensor = numeric[1:]
 
     log_probs = model.forward(input_tensor)
-    loss = criterion(log_probs.view(-1, len(itos)), target_tensor.view(-1))
+    loss = criterion(log_probs.view(-1, len(vocab)), target_tensor.view(-1))
+
     """
     if print_here:
         lossTensor = print_loss(log_probs.view(-1, len(itos)+3), target_tensor.view(-1)).view(-1, args.batchSize)
@@ -87,7 +86,7 @@ def front_pass(model, numeric, criterion, hidden, beginning, train=True, print_h
     return loss, target_tensor.view(-1).size()[0], hidden, beginning
 
 
-def run_epoch_train(optim, model, criterion, training_chars):
+def run_epoch_train(args, device, optim, model, criterion, training_chars, vocab):
     optim.zero_grad()
     start_time = time.time()
     train_chars = 0
@@ -95,7 +94,7 @@ def run_epoch_train(optim, model, criterion, training_chars):
     loss_has_been_bad = 0
     for counter, numeric in enumerate(training_chars):
         print_here = (counter % 50 == 0)
-        loss, char_counts, hidden, beginning = front_pass(model, numeric, criterion, hidden, beginning,
+        loss, char_counts, hidden, beginning = front_pass(args, device, model, numeric, criterion, hidden, beginning, vocab,
                                                           print_here=print_here, train=True)
         loss.backward()
         nn.utils.clip_grad_value_(model.parameters(), 5.0)
@@ -115,14 +114,13 @@ def run_epoch_train(optim, model, criterion, training_chars):
             print(f"Chars per sec {train_chars/(time.time()-start_time)}")
 
 
-def run_epoch_eval(model, criterion, dev_chars):
+def run_epoch_eval(args, device, model, criterion, dev_chars, vocab):
     dev_loss = 0
     dev_char_count = 0
     hidden, beginning = None, None
     for counter, numeric in enumerate(dev_chars):
         print_here = (counter % 50 == 0)
-        loss, number_of_characters, hidden, beginning = front_pass(model, criterion, numeric, hidden, beginning,
-                                                                   print_here=print_here, train=False)
+        loss, number_of_characters, hidden, beginning = front_pass(args, device, model, criterion, numeric, hidden, beginning, vocab,print_here=print_here, train=False)
         dev_loss += number_of_characters * loss.cpu().data.numpy()
         dev_char_count += number_of_characters
     dev_loss /= dev_char_count
@@ -135,7 +133,7 @@ def main():
     char_vocab_path = CHAR_VOCABS[args.language]
     itos, stoi = generate_vocab_mappings(char_vocab_path)
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-    model = WordNLM(args.char_embedding_size, len(itos), args.hidden_dim, args.layer_num,
+    model = WordNLM(args.word_embedding_size, len(itos), args.hidden_dim, args.layer_num,
                     args.weight_dropout_in, args.weight_dropout_hidden, args.char_dropout_prob)
     model.to(device)
     model.train()
@@ -153,16 +151,20 @@ def main():
     dev_losses = []
     max_num_epochs = 10000
     for epoch in tqdm.tqdm(range(max_num_epochs), total=max_num_epochs, desc="Doing epoch"):
-        training_data = corpus_iterator_wiki.training(args.language)
-        training_chars = prepare_dataset_chunks(training_data, stoi, args, device, train=True)
-        model.train()
-        run_epoch_train(optim, model, criterion, training_chars)
+        # Training & eval over one epoch
+        train_data = corpus_iterator_wiki_words.training(args.language)
+        train_encoded_words = prepare_dataset_chunks(train_data, stoi, args, device, train=True)
 
-        dev_data = corpus_iterator_wiki.dev(args.language)
+        model.train()
+        # Calling front_pass()
+        run_epoch_train(args, device, optim, model, criterion, train_encoded_words, itos)
+
+        dev_data = corpus_iterator_wiki_words.dev(args.language)
         dev_chars = prepare_dataset_chunks(dev_data, stoi, args, device, train=False)
         model.eval()
 
-        dev_loss = run_epoch_eval(model, criterion, dev_chars)
+
+        dev_loss = run_epoch_eval(args, device, model, criterion, dev_chars, itos)
         dev_losses.append(dev_loss)
 
         early_stop = len(dev_losses) > 1 and dev_losses[-1] > dev_losses[-2]
@@ -175,12 +177,16 @@ def main():
         if (time.time() - total_start_time) / 60 > 4200:
             print("Breaking early to get some result within 72 hours")
             break
-        with open(LOG_HOME+"/"+args.language+"_"+__file__+"_"+str(args.myID), "w") as out_file:
+        with open(LOG_HOME+"/"+args.language+"_"+__file__+"_"+str(args.my_id), "w") as out_file:
             print(" ".join([str(x) for x in dev_losses]), file=out_file)
             print(" ".join(sys.argv), file=out_file)
             print(str(args), file=out_file)
-        # FIXME: Why is optimizer - Mention to dupoux
+        # FIXME: Why is optimizer - to mention
         # Momentum peut pas marcher si pas 0
         learning_rate *= args.lr_decay
-        # FIXME: Pk cette ligne?
+        # FIXME: Why this line ?
         optim = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.0)  # 0.02, 0.9
+
+
+if __name__ == "__main__":
+    main()
