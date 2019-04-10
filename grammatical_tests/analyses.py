@@ -61,8 +61,8 @@ def absolute_test(probs):
 
 def main():
 
-    grammatical_probs = pickle_load(RESULTS_PATHS["3_args_grammatical"])
-    ungrammatical_probs = pickle_load(RESULTS_PATHS["3_args_ungrammatical"])
+    grammatical_probs = pickle_load(RESULTS_PATHS["3_args_masc_grammatical"])
+    ungrammatical_probs = pickle_load(RESULTS_PATHS["3_args_masc_ungrammatical"])
     sentences_nb = int(len(grammatical_probs)/36)
 
     relative_accuracies = relative_test(grammatical_probs, ungrammatical_probs, sentences_nb)
