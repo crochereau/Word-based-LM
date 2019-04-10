@@ -54,11 +54,10 @@ def gender_test(gender_model, gender_device, vocab_mapping):
                 assert len(value) == number_tokens, f"{idx}, {len(value)}"
 
             # Compute word log probabilities
-            numericalized_gender_sentences, gender_logprobs, gender_losses = compute_logprob(gender_tokens, gender_model, vocab_mapping,
+            numericalized_gender_sentences, gender_logprobs = compute_logprob(gender_tokens, gender_model, vocab_mapping,
                                                                                              gender_device)
             print("number of sentences:", len(numericalized_gender_sentences))
             print("shape of log probabilities prediction:", gender_logprobs.shape)
-            # print("size of losses: ", len(gender_losses))
 
             # Compute sentence probabilities
             gender_results = per_sentence_probabilities(numericalized_gender_sentences, gender_logprobs)
@@ -95,17 +94,27 @@ def syntactic_test(path, syntactic_model, syntactic_device, vocab_mapping):
     tokens = tokenizer(test_sentences, vocab_mapping)
     print("number of sentences:", len(tokens))
 
-    # Compute word log probabilities
+    # TODO: create function that check if no OOVs in datasets
+    """
+    check_tokens =[]
+    for stc_idx, stc in enumerate(tokens):
+        for token_idx, token_val in enumerate(tokens[stc_idx]):
+            if token_val == 2:
+                check_tokens.append(stc_idx)
+                check_tokens.append(token_idx)
 
-    numericalized_sentences, logprobs, losses = compute_logprob(tokens, syntactic_model,
+    # Compute word log probabilities
+    """
+    numericalized_sentences, logprobs = compute_logprob(tokens, syntactic_model,
                                                                 vocab_mapping, syntactic_device)
     sentences_nb = len(numericalized_sentences)
+
     print("number of sentences:", sentences_nb)
-    print("shape of log probabilities prediction:", logprobs.shape)
 
     # Compute sentence probabilities
     probs = per_sentence_probabilities(numericalized_sentences, logprobs)
     assert len(probs) == sentences_nb
 
     return probs
+
 

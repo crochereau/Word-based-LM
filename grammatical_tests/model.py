@@ -10,7 +10,7 @@ class WordNLM(nn.Module):
         super(WordNLM, self).__init__()
         # Hyperparams
         self.char_embedding_size = char_embedding_size
-        self.vocab_size = vocab_size  # FIXME: Vocab size + 3
+        self.vocab_size = vocab_size
         self.hidden_dim = hidden_dim
         self.layer_num = layer_num
         self.weight_dropout_in = weight_dropout_in

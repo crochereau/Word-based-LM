@@ -29,30 +29,36 @@ def compute_logprob(tokenized_sentences, model, vocab_mapping, device):
         while len(tokenized_sentences[i]) < maxLength:
             tokenized_sentences[i].append(0)
 
+    # batchifying probabilities computations
+    prediction = []
+
+    # batch = 36
+    #for x in range(0, len(tokenized_sentences), 36):
+
     input_tensor_forward = torch.tensor([[0]+x for x in tokenized_sentences], dtype=torch.long,
-                                        device=device, requires_grad=False).transpose(0, 1)
+                                    device=device, requires_grad=False).transpose(0, 1)
     print("input_tensor_forward done")
 
-    target = input_tensor_forward[1:]
-    print("target done")
+    #target = input_tensor_forward[1:]
     input_cut = input_tensor_forward[:-1]
-    print("input_cut done")
 
-    model.eval()
-    print("evaluation done")
-    prediction = model(input_cut)
+    with torch.no_grad():
+        model.eval()
+        prediction = model(input_cut)
     predictions = prediction.detach().numpy()
-    print("predictions done")
+
     # predictions.shape = maxLength * number of sentences * vocabulary size
 
+    """
     loss_module = torch.nn.NLLLoss(reduction='none', ignore_index=0)
     print("loss module")
     losses = loss_module(prediction.reshape(-1, len(vocab_mapping)),
                                         target.reshape(-1)).reshape(maxLength, len(tokenized_sentences))
     losses = losses.sum(0).data.cpu().numpy()
     print("losses done")
+    """
 
-    return tokenized_sentences, predictions, losses
+    return tokenized_sentences, predictions
 
 
 def per_sentence_probabilities(padded_sentences, log_predictions):
