@@ -1,12 +1,12 @@
-from paths import WIKIPEDIA_HOME
+from paths import CORPORA_HOME
 
 def load(language, partition, removeMarkup=True):
     if language == "italian":
-        path = WIKIPEDIA_HOME+"/itwiki-"+partition+"-tagged.txt"
+        path = CORPORA_HOME+"/itwiki-"+partition+"-tagged.txt"
     elif language == "english":
-        path = WIKIPEDIA_HOME+"/english-"+partition+"-tagged.txt"
+        path = CORPORA_HOME+"/english-"+partition+"-tagged.txt"
     elif language == "german":
-        path = WIKIPEDIA_HOME+""+language+"-"+partition+"-tagged.txt"
+        path = CORPORA_HOME+""+language+"-"+partition+"-tagged.txt"
     else:
         assert False
     chunk = []
@@ -34,11 +34,11 @@ def load(language, partition, removeMarkup=True):
 
 def count_elements(language, partition, removeMarkup=True):
     if language == "italian":
-        path = WIKIPEDIA_HOME+"/itwiki-"+partition+"-tagged.txt"
+        path = CORPORA_HOME+"/itwiki-"+partition+"-tagged.txt"
     elif language == "english":
-        path = WIKIPEDIA_HOME+"/english-"+partition+"-tagged.txt"
+        path = CORPORA_HOME+"/english-"+partition+"-tagged.txt"
     elif language == "german":
-        path = WIKIPEDIA_HOME+""+language+"-"+partition+"-tagged.txt"
+        path = CORPORA_HOME+""+language+"-"+partition+"-tagged.txt"
     else:
         assert False
 

@@ -7,6 +7,25 @@ import torch
 from model import WordNLM
 
 
+def encode_words(sentences, word_to_idx):
+    """
+
+    Args:
+        sentences:
+        word_to_idx:
+
+    Returns:
+
+    """
+    encoded_sentences = [[] for _ in range(len(sentences))]
+    for i in range(len(sentences)):
+        for j in range(len(sentences[i])):
+            word = sentences[i][j]
+            encoded_sentences[i].append(word_to_idx[word] if word in word_to_idx else 2)
+
+    return encoded_sentences
+
+
 def generate_german_dict(path):
     # TODO: path is "vocabularies/de_dict.csv"
     """
@@ -60,6 +79,7 @@ def generate_german_dict(path):
 def gender_tokenizer(intervening_elements, sentences, word_to_idx):
     """
     Args:
+        intervening_elements: number of elements between article and noun
         sentences: text file
         word_to_idx: vocabulary mapping word to unique integers
 
@@ -97,6 +117,7 @@ def generate_vocab_mappings(path):
     with open(path, "r") as inFile:
         itos = [x.split("\t")[0] for x in inFile.read().strip().split("\n")[:50003]]
     stoi = dict((tok, i) for i, tok in enumerate(itos))
+
     return itos, stoi
 
 
@@ -111,7 +132,23 @@ def load_sentences(input_path):
     return output
 
 
-def load_WordNLM_model(weight_path, model, device):
+def load_sRNN_model(weight_path, model, device):
+    """
+    Args:
+        weight_path: path to best saved model
+        model: a language model
+        device: computing device
+
+    Returns:
+        model: loaded model
+    """
+    assert isinstance(model, simpleRNN)
+    torch.load(weight_path, map_location=device)
+
+    return model
+
+
+def load_WordNLM_model(weight_path, model, device, which_LM):
     """
     Args:
         weight_path: path to best saved model
@@ -122,11 +159,16 @@ def load_WordNLM_model(weight_path, model, device):
         model: loaded model
     """
     assert isinstance(model, WordNLM)
-    checkpoint = torch.load(weight_path, map_location=device)
-    named_modules = {"rnn": model.rnn, "output": model.output, "char_embeddings": model.char_embeddings}
-    for name, module in named_modules.items():
-        print(checkpoint[name].keys())
-        module.load_state_dict(checkpoint[name])
+
+    if which_LM == "base_model":
+        checkpoint = torch.load(weight_path, map_location=device)
+        named_modules = {"rnn": model.rnn, "output": model.output, "char_embeddings": model.char_embeddings}
+        for name, module in named_modules.items():
+            print(checkpoint[name].keys())
+            module.load_state_dict(checkpoint[name])
+    else:
+        torch.load(weight_path, map_location=device)
+
     return model
 
 
@@ -162,25 +204,19 @@ def pickle_load(path):
     return loaded_file
 
 
-def tokenizer(sentences, word_to_idx):
+def tokenizer(sentences):
     """
     Input: loaded text file
     Output: tokenized text
     """
     sentences = sentences.replace(".", ". <eos>")  # adding end of sentence symbols for tokenization
-
     sentences = sentences.split("<eos>")  # separates sentences
     sentences.pop()  # removes last element (a whitespace)
 
     for i in range(len(sentences)):  # tokenizes sentences
-        sentences[i] = sentences[i].replace(",", " ,").replace(".", " .").replace(":", " :").replace("?", " ?").replace("!", " !").replace(";", " ;")
+        sentences[i] = sentences[i].replace(",", " ,").replace(".", " .").replace(":", " :")\
+            .replace("?", " ?").replace("!", " !").replace(";", " ;")
         sentences[i] = sentences[i].lower()
         sentences[i] = sentences[i].split()
 
-    tokenized_sentences = [[] for _ in range(len(sentences))]
-    for i in range(len(sentences)):
-        for j in range(len(sentences[i])):
-            word = sentences[i][j]
-            tokenized_sentences[i].append(word_to_idx[word] if word in word_to_idx else 2)
-
-    return tokenized_sentences
+    return sentences

@@ -18,9 +18,7 @@ def compute_logprob(tokenized_sentences, model, vocab_mapping, device):
         tokenized_sentences: vector of encoded sentences padded with zeros, size = number of sentences
         predictions: matrix of per-word log probabilities, size = length of longer sentence *
                                                                     number of sentences * vocabulary size
-        losses: vector of NLL losses, size = number of sentences
     """
-
     maxLength = max([len(x) for x in tokenized_sentences])
     print("maxLength:", maxLength)
 
@@ -28,12 +26,6 @@ def compute_logprob(tokenized_sentences, model, vocab_mapping, device):
     for i in range(len(tokenized_sentences)):
         while len(tokenized_sentences[i]) < maxLength:
             tokenized_sentences[i].append(0)
-
-    # batchifying probabilities computations
-    prediction = []
-
-    # batch = 36
-    #for x in range(0, len(tokenized_sentences), 36):
 
     input_tensor_forward = torch.tensor([[0]+x for x in tokenized_sentences], dtype=torch.long,
                                     device=device, requires_grad=False).transpose(0, 1)

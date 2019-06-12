@@ -59,10 +59,17 @@ def absolute_test(probs):
     return absolute_results
 
 
-def main():
+def normalized_relative_test(probs):
+    return normalized_relative_results
 
-    grammatical_probs = pickle_load(RESULTS_PATHS["3_args_masc_grammatical"])
-    ungrammatical_probs = pickle_load(RESULTS_PATHS["3_args_masc_ungrammatical"])
+
+def main():
+    # FIXME: temporary comments
+    # grammatical_probs = pickle_load(RESULTS_PATHS["3_args_masc_grammatical"])
+    # ungrammatical_probs = pickle_load(RESULTS_PATHS["3_args_masc_ungrammatical"])
+
+    grammatical_probs = pickle_load("results/model2_gram_probs.txt")
+    ungrammatical_probs = pickle_load("results/model2_ungram_probs.txt")
     sentences_nb = int(len(grammatical_probs)/36)
 
     relative_accuracies = relative_test(grammatical_probs, ungrammatical_probs, sentences_nb)

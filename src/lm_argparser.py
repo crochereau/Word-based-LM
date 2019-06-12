@@ -4,12 +4,13 @@ import random
 parser = argparse.ArgumentParser()
 
 parser.add_argument("--language", default="german", type=str)
-parser.add_argument("--load-from", dest="load_from", type=str)
+parser.add_argument("--load_from", dest="load_from", type=str)
 
 parser.add_argument("--batch_size", type=int, default=128)
 parser.add_argument("--word_embedding_size", type=int, default=random.choice([100, 200, 300]))
 parser.add_argument("--hidden_dim", type=int, default=random.choice([1024]))
 parser.add_argument("--layer_num", type=int, default=random.choice([1, 2]))
+parser.add_argument("--nonlinearity", default=random.choice(["tanh", "relu"]), type=str)
 
 parser.add_argument("--weight_dropout_in", type=float,
                     default=random.choice([0.0, 0.0, 0.0, 0.01]))
@@ -28,7 +29,7 @@ parser.add_argument("--verbose", type=bool, default=False)
 parser.add_argument("--lr_decay", type=float,
                     default=random.choice([0.5, 0.6, 0.7, 0.9, 0.95, 0.98, 1.0]))
 
-parser.add_argument('--log-interval', type=int, default=200, metavar='N',
+parser.add_argument('--log_interval', type=int, default=200, metavar='N',
                        help='report interval')
 parser.add_argument('--save', type=str, default='-model.pt',
                        help='path to save the final model')

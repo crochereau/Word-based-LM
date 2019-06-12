@@ -7,7 +7,7 @@ from paths import WIKIPEDIA_HOME
 from paths import MODELS_HOME
 
 import argparse
-import corpusIteratorWikiWords
+import corpus_iterator_wiki_words
 import random
 import torch
 from weight_drop import WeightDrop

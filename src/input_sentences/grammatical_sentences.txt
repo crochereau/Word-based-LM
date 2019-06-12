@@ -394,42 +394,42 @@ Wir wissen, dass seinen Neffen dem Onkel ein Mantel geschenkt hat.
 Wir wissen, dass seinen Neffen ein Mantel dem Onkel geschenkt hat.
 Wir wissen, dass ein Mantel dem Onkel seinen Neffen geschenkt hat.
 Wir wissen, dass ein Mantel seinen Neffen dem Onkel geschenkt hat.
-Wir wissen, dass der Eigentümer sein Nachbarn seinem Fernseher verliehen hat.
-Wir wissen, dass der Eigentümer seinem Fernseher sein Nachbarn verliehen hat.
-Wir wissen, dass sein Nachbarn der Eigentümer seinem Fernseher verliehen hat.
-Wir wissen, dass sein Nachbarn seinem Fernseher der Eigentümer verliehen hat.
-Wir wissen, dass seinem Fernseher der Eigentümer sein Nachbarn verliehen hat.
-Wir wissen, dass seinem Fernseher sein Nachbarn der Eigentümer verliehen hat.
-Wir wissen, dass der Eigentümer  Nachbarn seinen Fernseher verliehen hat.
-Wir wissen, dass der Eigentümer seinen Fernseher  Nachbarn verliehen hat.
-Wir wissen, dass  Nachbarn der Eigentümer seinen Fernseher verliehen hat.
-Wir wissen, dass  Nachbarn seinen Fernseher der Eigentümer verliehen hat.
-Wir wissen, dass seinen Fernseher der Eigentümer  Nachbarn verliehen hat.
-Wir wissen, dass seinen Fernseher  Nachbarn der Eigentümer verliehen hat.
-Wir wissen, dass den Eigentümer sein Nachbar seinem Fernseher verliehen hat.
-Wir wissen, dass den Eigentümer seinem Fernseher sein Nachbar verliehen hat.
-Wir wissen, dass sein Nachbar den Eigentümer seinem Fernseher verliehen hat.
-Wir wissen, dass sein Nachbar seinem Fernseher den Eigentümer verliehen hat.
-Wir wissen, dass seinem Fernseher den Eigentümer sein Nachbar verliehen hat.
-Wir wissen, dass seinem Fernseher sein Nachbar den Eigentümer verliehen hat.
-Wir wissen, dass den Eigentümer  Nachbarn sein Fernseher verliehen hat.
-Wir wissen, dass den Eigentümer sein Fernseher  Nachbarn verliehen hat.
-Wir wissen, dass  Nachbarn den Eigentümer sein Fernseher verliehen hat.
-Wir wissen, dass  Nachbarn sein Fernseher den Eigentümer verliehen hat.
-Wir wissen, dass sein Fernseher den Eigentümer  Nachbarn verliehen hat.
-Wir wissen, dass sein Fernseher  Nachbarn den Eigentümer verliehen hat.
-Wir wissen, dass dem Eigentümer sein Nachbar seinen Fernseher verliehen hat.
-Wir wissen, dass dem Eigentümer seinen Fernseher sein Nachbar verliehen hat.
-Wir wissen, dass sein Nachbar dem Eigentümer seinen Fernseher verliehen hat.
-Wir wissen, dass sein Nachbar seinen Fernseher dem Eigentümer verliehen hat.
-Wir wissen, dass seinen Fernseher dem Eigentümer sein Nachbar verliehen hat.
-Wir wissen, dass seinen Fernseher sein Nachbar dem Eigentümer verliehen hat.
-Wir wissen, dass dem Eigentümer sein Nachbarn sein Fernseher verliehen hat.
-Wir wissen, dass dem Eigentümer sein Fernseher sein Nachbarn verliehen hat.
-Wir wissen, dass sein Nachbarn dem Eigentümer sein Fernseher verliehen hat.
-Wir wissen, dass sein Nachbarn sein Fernseher dem Eigentümer verliehen hat.
-Wir wissen, dass sein Fernseher dem Eigentümer sein Nachbarn verliehen hat.
-Wir wissen, dass sein Fernseher sein Nachbarn dem Eigentümer verliehen hat.
+Wir wissen, dass der Eigentümer den Mieter seinem Fernseher verliehen hat.
+Wir wissen, dass der Eigentümer seinem Fernseher den Mieter verliehen hat.
+Wir wissen, dass den Mieter der Eigentümer seinem Fernseher verliehen hat.
+Wir wissen, dass den Mieter seinem Fernseher der Eigentümer verliehen hat.
+Wir wissen, dass seinem Fernseher der Eigentümer den Mieter verliehen hat.
+Wir wissen, dass seinem Fernseher den Mieter der Eigentümer verliehen hat.
+Wir wissen, dass der Eigentümer dem Mieter seinen Fernseher verliehen hat.
+Wir wissen, dass der Eigentümer seinen Fernseher dem Mieter verliehen hat.
+Wir wissen, dass dem Mieter der Eigentümer seinen Fernseher verliehen hat.
+Wir wissen, dass dem Mieter seinen Fernseher der Eigentümer verliehen hat.
+Wir wissen, dass seinen Fernseher der Eigentümer dem Mieter verliehen hat.
+Wir wissen, dass seinen Fernseher dem Mieter der Eigentümer verliehen hat.
+Wir wissen, dass den Eigentümer der Mieter seinem Fernseher verliehen hat.
+Wir wissen, dass den Eigentümer seinem Fernseher der Mieter verliehen hat.
+Wir wissen, dass der Mieter den Eigentümer seinem Fernseher verliehen hat.
+Wir wissen, dass der Mieter seinem Fernseher den Eigentümer verliehen hat.
+Wir wissen, dass seinem Fernseher den Eigentümer der Mieter verliehen hat.
+Wir wissen, dass seinem Fernseher der Mieter den Eigentümer verliehen hat.
+Wir wissen, dass den Eigentümer dem Mieter sein Fernseher verliehen hat.
+Wir wissen, dass den Eigentümer sein Fernseher dem Mieter verliehen hat.
+Wir wissen, dass dem Mieter den Eigentümer sein Fernseher verliehen hat.
+Wir wissen, dass dem Mieter sein Fernseher den Eigentümer verliehen hat.
+Wir wissen, dass sein Fernseher den Eigentümer dem Mieter verliehen hat.
+Wir wissen, dass sein Fernseher dem Mieter den Eigentümer verliehen hat.
+Wir wissen, dass dem Eigentümer der Mieter seinen Fernseher verliehen hat.
+Wir wissen, dass dem Eigentümer seinen Fernseher der Mieter verliehen hat.
+Wir wissen, dass der Mieter dem Eigentümer seinen Fernseher verliehen hat.
+Wir wissen, dass der Mieter seinen Fernseher dem Eigentümer verliehen hat.
+Wir wissen, dass seinen Fernseher dem Eigentümer der Mieter verliehen hat.
+Wir wissen, dass seinen Fernseher der Mieter dem Eigentümer verliehen hat.
+Wir wissen, dass dem Eigentümer den Mieter sein Fernseher verliehen hat.
+Wir wissen, dass dem Eigentümer sein Fernseher den Mieter verliehen hat.
+Wir wissen, dass den Mieter dem Eigentümer sein Fernseher verliehen hat.
+Wir wissen, dass den Mieter sein Fernseher dem Eigentümer verliehen hat.
+Wir wissen, dass sein Fernseher dem Eigentümer den Mieter verliehen hat.
+Wir wissen, dass sein Fernseher den Mieter dem Eigentümer verliehen hat.
 Wir wissen, dass der Zeuge den Polizisten dem Tatort beschrieben hat.
 Wir wissen, dass der Zeuge dem Tatort den Polizisten beschrieben hat.
 Wir wissen, dass den Polizisten der Zeuge dem Tatort beschrieben hat.
@@ -934,42 +934,42 @@ Wir wissen, dass den Verleger einem Leser ein Artikel gesandt hat.
 Wir wissen, dass den Verleger ein Artikel einem Leser gesandt hat.
 Wir wissen, dass ein Artikel einem Leser den Verleger gesandt hat.
 Wir wissen, dass ein Artikel den Verleger einem Leser gesandt hat.
-Wir wissen, dass der Bergführer den Wanderer  Weg gezeigt hat.
-Wir wissen, dass der Bergführer  Weg den Wanderer gezeigt hat.
-Wir wissen, dass den Wanderer der Bergführer  Weg gezeigt hat.
-Wir wissen, dass den Wanderer  Weg der Bergführer gezeigt hat.
-Wir wissen, dass  Weg der Bergführer den Wanderer gezeigt hat.
-Wir wissen, dass  Weg den Wanderer der Bergführer gezeigt hat.
-Wir wissen, dass der Bergführer dem Wanderer einen Weg gezeigt hat.
-Wir wissen, dass der Bergführer einen Weg dem Wanderer gezeigt hat.
-Wir wissen, dass dem Wanderer der Bergführer einen Weg gezeigt hat.
-Wir wissen, dass dem Wanderer einen Weg der Bergführer gezeigt hat.
-Wir wissen, dass einen Weg der Bergführer dem Wanderer gezeigt hat.
-Wir wissen, dass einen Weg dem Wanderer der Bergführer gezeigt hat.
-Wir wissen, dass den Bergführer der Wanderer  Weg gezeigt hat.
-Wir wissen, dass den Bergführer  Weg der Wanderer gezeigt hat.
-Wir wissen, dass der Wanderer den Bergführer  Weg gezeigt hat.
-Wir wissen, dass der Wanderer  Weg den Bergführer gezeigt hat.
-Wir wissen, dass  Weg den Bergführer der Wanderer gezeigt hat.
-Wir wissen, dass  Weg der Wanderer den Bergführer gezeigt hat.
-Wir wissen, dass den Bergführer dem Wanderer den Weg gezeigt hat.
-Wir wissen, dass den Bergführer den Weg dem Wanderer gezeigt hat.
-Wir wissen, dass dem Wanderer den Bergführer den Weg gezeigt hat.
-Wir wissen, dass dem Wanderer den Weg den Bergführer gezeigt hat.
-Wir wissen, dass den Weg den Bergführer dem Wanderer gezeigt hat.
-Wir wissen, dass den Weg dem Wanderer den Bergführer gezeigt hat.
-Wir wissen, dass dem Bergführer der Wanderer einen Weg gezeigt hat.
-Wir wissen, dass dem Bergführer einen Weg der Wanderer gezeigt hat.
-Wir wissen, dass der Wanderer dem Bergführer einen Weg gezeigt hat.
-Wir wissen, dass der Wanderer einen Weg dem Bergführer gezeigt hat.
-Wir wissen, dass einen Weg dem Bergführer der Wanderer gezeigt hat.
-Wir wissen, dass einen Weg der Wanderer dem Bergführer gezeigt hat.
-Wir wissen, dass dem Bergführer den Wanderer den Weg gezeigt hat.
-Wir wissen, dass dem Bergführer den Weg den Wanderer gezeigt hat.
-Wir wissen, dass den Wanderer dem Bergführer den Weg gezeigt hat.
-Wir wissen, dass den Wanderer den Weg dem Bergführer gezeigt hat.
-Wir wissen, dass den Weg dem Bergführer den Wanderer gezeigt hat.
-Wir wissen, dass den Weg den Wanderer dem Bergführer gezeigt hat.
+Wir wissen, dass der Bergführer den Wanderer dem Weg gezeigt hat.
+Wir wissen, dass der Bergführer dem Weg den Wanderer gezeigt hat.
+Wir wissen, dass den Wanderer der Bergführer dem Weg gezeigt hat.
+Wir wissen, dass den Wanderer dem Weg der Bergführer gezeigt hat.
+Wir wissen, dass dem Weg der Bergführer den Wanderer gezeigt hat.
+Wir wissen, dass dem Weg den Wanderer der Bergführer gezeigt hat.
+Wir wissen, dass der Bergführer dem Wanderer den Weg gezeigt hat.
+Wir wissen, dass der Bergführer den Weg dem Wanderer gezeigt hat.
+Wir wissen, dass dem Wanderer der Bergführer den Weg gezeigt hat.
+Wir wissen, dass dem Wanderer den Weg der Bergführer gezeigt hat.
+Wir wissen, dass den Weg der Bergführer dem Wanderer gezeigt hat.
+Wir wissen, dass den Weg dem Wanderer der Bergführer gezeigt hat.
+Wir wissen, dass den Bergführer der Wanderer dem Weg gezeigt hat.
+Wir wissen, dass den Bergführer dem Weg der Wanderer gezeigt hat.
+Wir wissen, dass der Wanderer den Bergführer dem Weg gezeigt hat.
+Wir wissen, dass der Wanderer dem Weg den Bergführer gezeigt hat.
+Wir wissen, dass dem Weg den Bergführer der Wanderer gezeigt hat.
+Wir wissen, dass dem Weg der Wanderer den Bergführer gezeigt hat.
+Wir wissen, dass den Bergführer dem Wanderer der Weg gezeigt hat.
+Wir wissen, dass den Bergführer der Weg dem Wanderer gezeigt hat.
+Wir wissen, dass dem Wanderer den Bergführer der Weg gezeigt hat.
+Wir wissen, dass dem Wanderer der Weg den Bergführer gezeigt hat.
+Wir wissen, dass der Weg den Bergführer dem Wanderer gezeigt hat.
+Wir wissen, dass der Weg dem Wanderer den Bergführer gezeigt hat.
+Wir wissen, dass dem Bergführer der Wanderer den Weg gezeigt hat.
+Wir wissen, dass dem Bergführer den Weg der Wanderer gezeigt hat.
+Wir wissen, dass der Wanderer dem Bergführer den Weg gezeigt hat.
+Wir wissen, dass der Wanderer den Weg dem Bergführer gezeigt hat.
+Wir wissen, dass den Weg dem Bergführer der Wanderer gezeigt hat.
+Wir wissen, dass den Weg der Wanderer dem Bergführer gezeigt hat.
+Wir wissen, dass dem Bergführer den Wanderer der Weg gezeigt hat.
+Wir wissen, dass dem Bergführer der Weg den Wanderer gezeigt hat.
+Wir wissen, dass den Wanderer dem Bergführer der Weg gezeigt hat.
+Wir wissen, dass den Wanderer der Weg dem Bergführer gezeigt hat.
+Wir wissen, dass der Weg dem Bergführer den Wanderer gezeigt hat.
+Wir wissen, dass der Weg den Wanderer dem Bergführer gezeigt hat.
 Wir wissen, dass der Betrieb seinen Konkurrenten einem Vertrag vorgeschlagen hat.
 Wir wissen, dass der Betrieb einem Vertrag seinen Konkurrenten vorgeschlagen hat.
 Wir wissen, dass seinen Konkurrenten der Betrieb einem Vertrag vorgeschlagen hat.
@@ -1402,42 +1402,42 @@ Wir wissen, dass den Kandidaten dem Arbeitgeber sein Bescheid mitgeteilt hat.
 Wir wissen, dass den Kandidaten sein Bescheid dem Arbeitgeber mitgeteilt hat.
 Wir wissen, dass sein Bescheid dem Arbeitgeber den Kandidaten mitgeteilt hat.
 Wir wissen, dass sein Bescheid den Kandidaten dem Arbeitgeber mitgeteilt hat.
-Wir wissen, dass der Film diesen Akteur seinem Erfolg verdankt kat.
-Wir wissen, dass der Film seinem Erfolg diesen Akteur verdankt kat.
-Wir wissen, dass diesen Akteur der Film seinem Erfolg verdankt kat.
-Wir wissen, dass diesen Akteur seinem Erfolg der Film verdankt kat.
-Wir wissen, dass seinem Erfolg der Film diesen Akteur verdankt kat.
-Wir wissen, dass seinem Erfolg diesen Akteur der Film verdankt kat.
-Wir wissen, dass der Film diesem Akteur seinen Erfolg verdankt kat.
-Wir wissen, dass der Film seinen Erfolg diesem Akteur verdankt kat.
-Wir wissen, dass diesem Akteur der Film seinen Erfolg verdankt kat.
-Wir wissen, dass diesem Akteur seinen Erfolg der Film verdankt kat.
-Wir wissen, dass seinen Erfolg der Film diesem Akteur verdankt kat.
-Wir wissen, dass seinen Erfolg diesem Akteur der Film verdankt kat.
-Wir wissen, dass den Film dieser Akteur seinem Erfolg verdankt kat.
-Wir wissen, dass den Film seinem Erfolg dieser Akteur verdankt kat.
-Wir wissen, dass dieser Akteur den Film seinem Erfolg verdankt kat.
-Wir wissen, dass dieser Akteur seinem Erfolg den Film verdankt kat.
-Wir wissen, dass seinem Erfolg den Film dieser Akteur verdankt kat.
-Wir wissen, dass seinem Erfolg dieser Akteur den Film verdankt kat.
-Wir wissen, dass den Film diesem Akteur sein Erfolg verdankt kat.
-Wir wissen, dass den Film sein Erfolg diesem Akteur verdankt kat.
-Wir wissen, dass diesem Akteur den Film sein Erfolg verdankt kat.
-Wir wissen, dass diesem Akteur sein Erfolg den Film verdankt kat.
-Wir wissen, dass sein Erfolg den Film diesem Akteur verdankt kat.
-Wir wissen, dass sein Erfolg diesem Akteur den Film verdankt kat.
-Wir wissen, dass dem Film dieser Akteur seinen Erfolg verdankt kat.
-Wir wissen, dass dem Film seinen Erfolg dieser Akteur verdankt kat.
-Wir wissen, dass dieser Akteur dem Film seinen Erfolg verdankt kat.
-Wir wissen, dass dieser Akteur seinen Erfolg dem Film verdankt kat.
-Wir wissen, dass seinen Erfolg dem Film dieser Akteur verdankt kat.
-Wir wissen, dass seinen Erfolg dieser Akteur dem Film verdankt kat.
-Wir wissen, dass dem Film diesen Akteur sein Erfolg verdankt kat.
-Wir wissen, dass dem Film sein Erfolg diesen Akteur verdankt kat.
-Wir wissen, dass diesen Akteur dem Film sein Erfolg verdankt kat.
-Wir wissen, dass diesen Akteur sein Erfolg dem Film verdankt kat.
-Wir wissen, dass sein Erfolg dem Film diesen Akteur verdankt kat.
-Wir wissen, dass sein Erfolg diesen Akteur dem Film verdankt kat.
+Wir wissen, dass der Film diesen Akteur seinem Erfolg verdankt hat.
+Wir wissen, dass der Film seinem Erfolg diesen Akteur verdankt hat.
+Wir wissen, dass diesen Akteur der Film seinem Erfolg verdankt hat.
+Wir wissen, dass diesen Akteur seinem Erfolg der Film verdankt hat.
+Wir wissen, dass seinem Erfolg der Film diesen Akteur verdankt hat.
+Wir wissen, dass seinem Erfolg diesen Akteur der Film verdankt hat.
+Wir wissen, dass der Film diesem Akteur seinen Erfolg verdankt hat.
+Wir wissen, dass der Film seinen Erfolg diesem Akteur verdankt hat.
+Wir wissen, dass diesem Akteur der Film seinen Erfolg verdankt hat.
+Wir wissen, dass diesem Akteur seinen Erfolg der Film verdankt hat.
+Wir wissen, dass seinen Erfolg der Film diesem Akteur verdankt hat.
+Wir wissen, dass seinen Erfolg diesem Akteur der Film verdankt hat.
+Wir wissen, dass den Film dieser Akteur seinem Erfolg verdankt hat.
+Wir wissen, dass den Film seinem Erfolg dieser Akteur verdankt hat.
+Wir wissen, dass dieser Akteur den Film seinem Erfolg verdankt hat.
+Wir wissen, dass dieser Akteur seinem Erfolg den Film verdankt hat.
+Wir wissen, dass seinem Erfolg den Film dieser Akteur verdankt hat.
+Wir wissen, dass seinem Erfolg dieser Akteur den Film verdankt hat.
+Wir wissen, dass den Film diesem Akteur sein Erfolg verdankt hat.
+Wir wissen, dass den Film sein Erfolg diesem Akteur verdankt hat.
+Wir wissen, dass diesem Akteur den Film sein Erfolg verdankt hat.
+Wir wissen, dass diesem Akteur sein Erfolg den Film verdankt hat.
+Wir wissen, dass sein Erfolg den Film diesem Akteur verdankt hat.
+Wir wissen, dass sein Erfolg diesem Akteur den Film verdankt hat.
+Wir wissen, dass dem Film dieser Akteur seinen Erfolg verdankt hat.
+Wir wissen, dass dem Film seinen Erfolg dieser Akteur verdankt hat.
+Wir wissen, dass dieser Akteur dem Film seinen Erfolg verdankt hat.
+Wir wissen, dass dieser Akteur seinen Erfolg dem Film verdankt hat.
+Wir wissen, dass seinen Erfolg dem Film dieser Akteur verdankt hat.
+Wir wissen, dass seinen Erfolg dieser Akteur dem Film verdankt hat.
+Wir wissen, dass dem Film diesen Akteur sein Erfolg verdankt hat.
+Wir wissen, dass dem Film sein Erfolg diesen Akteur verdankt hat.
+Wir wissen, dass diesen Akteur dem Film sein Erfolg verdankt hat.
+Wir wissen, dass diesen Akteur sein Erfolg dem Film verdankt hat.
+Wir wissen, dass sein Erfolg dem Film diesen Akteur verdankt hat.
+Wir wissen, dass sein Erfolg diesen Akteur dem Film verdankt hat.
 Wir wissen, dass der Wissenschaftler den Professor seinem Gedanken erklärt hat.
 Wir wissen, dass der Wissenschaftler seinem Gedanken den Professor erklärt hat.
 Wir wissen, dass den Professor der Wissenschaftler seinem Gedanken erklärt hat.
@@ -1474,42 +1474,42 @@ Wir wissen, dass den Professor dem Wissenschaftler sein Gedanke erklärt hat.
 Wir wissen, dass den Professor sein Gedanke dem Wissenschaftler erklärt hat.
 Wir wissen, dass sein Gedanke dem Wissenschaftler den Professor erklärt hat.
 Wir wissen, dass sein Gedanke den Professor dem Wissenschaftler erklärt hat.
-Wir wissen, dass der Diplomat den Auswanderer  Vorzug gegeben hat.
-Wir wissen, dass der Diplomat  Vorzug den Auswanderer gegeben hat.
-Wir wissen, dass den Auswanderer der Diplomat  Vorzug gegeben hat.
-Wir wissen, dass den Auswanderer  Vorzug der Diplomat gegeben hat.
-Wir wissen, dass  Vorzug der Diplomat den Auswanderer gegeben hat.
-Wir wissen, dass  Vorzug den Auswanderer der Diplomat gegeben hat.
-Wir wissen, dass der Diplomat dem Auswanderer einen Vorzug gegeben hat.
-Wir wissen, dass der Diplomat einen Vorzug dem Auswanderer gegeben hat.
-Wir wissen, dass dem Auswanderer der Diplomat einen Vorzug gegeben hat.
-Wir wissen, dass dem Auswanderer einen Vorzug der Diplomat gegeben hat.
-Wir wissen, dass einen Vorzug der Diplomat dem Auswanderer gegeben hat.
-Wir wissen, dass einen Vorzug dem Auswanderer der Diplomat gegeben hat.
-Wir wissen, dass den Diplomaten der Auswanderer  Vorzug gegeben hat.
-Wir wissen, dass den Diplomaten  Vorzug der Auswanderer gegeben hat.
-Wir wissen, dass der Auswanderer den Diplomaten  Vorzug gegeben hat.
-Wir wissen, dass der Auswanderer  Vorzug den Diplomaten gegeben hat.
-Wir wissen, dass  Vorzug den Diplomaten der Auswanderer gegeben hat.
-Wir wissen, dass  Vorzug der Auswanderer den Diplomaten gegeben hat.
-Wir wissen, dass den Diplomaten dem Auswanderer den Vorzug gegeben hat.
-Wir wissen, dass den Diplomaten den Vorzug dem Auswanderer gegeben hat.
-Wir wissen, dass dem Auswanderer den Diplomaten den Vorzug gegeben hat.
-Wir wissen, dass dem Auswanderer den Vorzug den Diplomaten gegeben hat.
-Wir wissen, dass den Vorzug den Diplomaten dem Auswanderer gegeben hat.
-Wir wissen, dass den Vorzug dem Auswanderer den Diplomaten gegeben hat.
-Wir wissen, dass dem Diplomaten der Auswanderer einen Vorzug gegeben hat.
-Wir wissen, dass dem Diplomaten einen Vorzug der Auswanderer gegeben hat.
-Wir wissen, dass der Auswanderer dem Diplomaten einen Vorzug gegeben hat.
-Wir wissen, dass der Auswanderer einen Vorzug dem Diplomaten gegeben hat.
-Wir wissen, dass einen Vorzug dem Diplomaten der Auswanderer gegeben hat.
-Wir wissen, dass einen Vorzug der Auswanderer dem Diplomaten gegeben hat.
-Wir wissen, dass dem Diplomaten den Auswanderer den Vorzug gegeben hat.
-Wir wissen, dass dem Diplomaten den Vorzug den Auswanderer gegeben hat.
-Wir wissen, dass den Auswanderer dem Diplomaten den Vorzug gegeben hat.
-Wir wissen, dass den Auswanderer den Vorzug dem Diplomaten gegeben hat.
-Wir wissen, dass den Vorzug dem Diplomaten den Auswanderer gegeben hat.
-Wir wissen, dass den Vorzug den Auswanderer dem Diplomaten gegeben hat.
+Wir wissen, dass der Diplomat den Auswanderer dem Vorzug gegeben hat.
+Wir wissen, dass der Diplomat dem Vorzug den Auswanderer gegeben hat.
+Wir wissen, dass den Auswanderer der Diplomat dem Vorzug gegeben hat.
+Wir wissen, dass den Auswanderer dem Vorzug der Diplomat gegeben hat.
+Wir wissen, dass dem Vorzug der Diplomat den Auswanderer gegeben hat.
+Wir wissen, dass dem Vorzug den Auswanderer der Diplomat gegeben hat.
+Wir wissen, dass der Diplomat dem Auswanderer den Vorzug gegeben hat.
+Wir wissen, dass der Diplomat den Vorzug dem Auswanderer gegeben hat.
+Wir wissen, dass dem Auswanderer der Diplomat den Vorzug gegeben hat.
+Wir wissen, dass dem Auswanderer den Vorzug der Diplomat gegeben hat.
+Wir wissen, dass den Vorzug der Diplomat dem Auswanderer gegeben hat.
+Wir wissen, dass den Vorzug dem Auswanderer der Diplomat gegeben hat.
+Wir wissen, dass den Diplomaten der Auswanderer dem Vorzug gegeben hat.
+Wir wissen, dass den Diplomaten dem Vorzug der Auswanderer gegeben hat.
+Wir wissen, dass der Auswanderer den Diplomaten dem Vorzug gegeben hat.
+Wir wissen, dass der Auswanderer dem Vorzug den Diplomaten gegeben hat.
+Wir wissen, dass dem Vorzug den Diplomaten der Auswanderer gegeben hat.
+Wir wissen, dass dem Vorzug der Auswanderer den Diplomaten gegeben hat.
+Wir wissen, dass den Diplomaten dem Auswanderer der Vorzug gegeben hat.
+Wir wissen, dass den Diplomaten der Vorzug dem Auswanderer gegeben hat.
+Wir wissen, dass dem Auswanderer den Diplomaten der Vorzug gegeben hat.
+Wir wissen, dass dem Auswanderer der Vorzug den Diplomaten gegeben hat.
+Wir wissen, dass der Vorzug den Diplomaten dem Auswanderer gegeben hat.
+Wir wissen, dass der Vorzug dem Auswanderer den Diplomaten gegeben hat.
+Wir wissen, dass dem Diplomaten der Auswanderer den Vorzug gegeben hat.
+Wir wissen, dass dem Diplomaten den Vorzug der Auswanderer gegeben hat.
+Wir wissen, dass der Auswanderer dem Diplomaten den Vorzug gegeben hat.
+Wir wissen, dass der Auswanderer den Vorzug dem Diplomaten gegeben hat.
+Wir wissen, dass den Vorzug dem Diplomaten der Auswanderer gegeben hat.
+Wir wissen, dass den Vorzug der Auswanderer dem Diplomaten gegeben hat.
+Wir wissen, dass dem Diplomaten den Auswanderer der Vorzug gegeben hat.
+Wir wissen, dass dem Diplomaten der Vorzug den Auswanderer gegeben hat.
+Wir wissen, dass den Auswanderer dem Diplomaten der Vorzug gegeben hat.
+Wir wissen, dass den Auswanderer der Vorzug dem Diplomaten gegeben hat.
+Wir wissen, dass der Vorzug dem Diplomaten den Auswanderer gegeben hat.
+Wir wissen, dass der Vorzug den Auswanderer dem Diplomaten gegeben hat.
 Wir wissen, dass der Apparat den Nutzer einem Vorteil verschaffen hat.
 Wir wissen, dass der Apparat einem Vorteil den Nutzer verschaffen hat.
 Wir wissen, dass den Nutzer der Apparat einem Vorteil verschaffen hat.
@@ -1726,42 +1726,42 @@ Wir wissen, dass den Richter dem Rat sein Beschluss bestätigt hat.
 Wir wissen, dass den Richter sein Beschluss dem Rat bestätigt hat.
 Wir wissen, dass sein Beschluss dem Rat den Richter bestätigt hat.
 Wir wissen, dass sein Beschluss den Richter dem Rat bestätigt hat.
-Wir wissen, dass der Techniker den Prototyp  Test unterzogen hat.
-Wir wissen, dass der Techniker  Test den Prototyp unterzogen hat.
-Wir wissen, dass den Prototyp der Techniker  Test unterzogen hat.
-Wir wissen, dass den Prototyp  Test der Techniker unterzogen hat.
-Wir wissen, dass  Test der Techniker den Prototyp unterzogen hat.
-Wir wissen, dass  Test den Prototyp der Techniker unterzogen hat.
+Wir wissen, dass der Techniker den Prototyp einem Test unterzogen hat.
+Wir wissen, dass der Techniker einem Test den Prototyp unterzogen hat.
+Wir wissen, dass den Prototyp der Techniker einem Test unterzogen hat.
+Wir wissen, dass den Prototyp einem Test der Techniker unterzogen hat.
+Wir wissen, dass einem Test der Techniker den Prototyp unterzogen hat.
+Wir wissen, dass einem Test den Prototyp der Techniker unterzogen hat.
 Wir wissen, dass der Techniker dem Prototyp einen Test unterzogen hat.
 Wir wissen, dass der Techniker einen Test dem Prototyp unterzogen hat.
 Wir wissen, dass dem Prototyp der Techniker einen Test unterzogen hat.
 Wir wissen, dass dem Prototyp einen Test der Techniker unterzogen hat.
 Wir wissen, dass einen Test der Techniker dem Prototyp unterzogen hat.
 Wir wissen, dass einen Test dem Prototyp der Techniker unterzogen hat.
-Wir wissen, dass den Techniker der Prototyp  Test unterzogen hat.
-Wir wissen, dass den Techniker  Test der Prototyp unterzogen hat.
-Wir wissen, dass der Prototyp den Techniker  Test unterzogen hat.
-Wir wissen, dass der Prototyp  Test den Techniker unterzogen hat.
-Wir wissen, dass  Test den Techniker der Prototyp unterzogen hat.
-Wir wissen, dass  Test der Prototyp den Techniker unterzogen hat.
-Wir wissen, dass den Techniker dem Prototyp einem Test unterzogen hat.
-Wir wissen, dass den Techniker einem Test dem Prototyp unterzogen hat.
-Wir wissen, dass dem Prototyp den Techniker einem Test unterzogen hat.
-Wir wissen, dass dem Prototyp einem Test den Techniker unterzogen hat.
-Wir wissen, dass einem Test den Techniker dem Prototyp unterzogen hat.
-Wir wissen, dass einem Test dem Prototyp den Techniker unterzogen hat.
+Wir wissen, dass den Techniker der Prototyp einem Test unterzogen hat.
+Wir wissen, dass den Techniker einem Test der Prototyp unterzogen hat.
+Wir wissen, dass der Prototyp den Techniker einem Test unterzogen hat.
+Wir wissen, dass der Prototyp einem Test den Techniker unterzogen hat.
+Wir wissen, dass einem Test den Techniker der Prototyp unterzogen hat.
+Wir wissen, dass einem Test der Prototyp den Techniker unterzogen hat.
+Wir wissen, dass den Techniker dem Prototyp ein Test unterzogen hat.
+Wir wissen, dass den Techniker ein Test dem Prototyp unterzogen hat.
+Wir wissen, dass dem Prototyp den Techniker ein Test unterzogen hat.
+Wir wissen, dass dem Prototyp ein Test den Techniker unterzogen hat.
+Wir wissen, dass ein Test den Techniker dem Prototyp unterzogen hat.
+Wir wissen, dass ein Test dem Prototyp den Techniker unterzogen hat.
 Wir wissen, dass dem Techniker der Prototyp einen Test unterzogen hat.
 Wir wissen, dass dem Techniker einen Test der Prototyp unterzogen hat.
 Wir wissen, dass der Prototyp dem Techniker einen Test unterzogen hat.
 Wir wissen, dass der Prototyp einen Test dem Techniker unterzogen hat.
 Wir wissen, dass einen Test dem Techniker der Prototyp unterzogen hat.
 Wir wissen, dass einen Test der Prototyp dem Techniker unterzogen hat.
-Wir wissen, dass dem Techniker den Prototyp einem Test unterzogen hat.
-Wir wissen, dass dem Techniker einem Test den Prototyp unterzogen hat.
-Wir wissen, dass den Prototyp dem Techniker einem Test unterzogen hat.
-Wir wissen, dass den Prototyp einem Test dem Techniker unterzogen hat.
-Wir wissen, dass einem Test dem Techniker den Prototyp unterzogen hat.
-Wir wissen, dass einem Test den Prototyp dem Techniker unterzogen hat.
+Wir wissen, dass dem Techniker den Prototyp ein Test unterzogen hat.
+Wir wissen, dass dem Techniker ein Test den Prototyp unterzogen hat.
+Wir wissen, dass den Prototyp dem Techniker ein Test unterzogen hat.
+Wir wissen, dass den Prototyp ein Test dem Techniker unterzogen hat.
+Wir wissen, dass ein Test dem Techniker den Prototyp unterzogen hat.
+Wir wissen, dass ein Test den Prototyp dem Techniker unterzogen hat.
 Wir wissen, dass der Kommissar den Erzeuger einem Zwang auferlegt hat.
 Wir wissen, dass der Kommissar einem Zwang den Erzeuger auferlegt hat.
 Wir wissen, dass den Erzeuger der Kommissar einem Zwang auferlegt hat.

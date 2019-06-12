@@ -1,7 +1,7 @@
 """Train LM"""
 
-import argparse
 import logging
+import math
 import random
 import sys
 import time
@@ -81,6 +81,7 @@ def run_epoch_train(args, device, optim, model, criterion, training_chars, vocab
         train_chars += char_counts
         if print_here:
             print(f"Counter {counter}, Train loss {loss}")
+            print(f"Perplexity {math.exp(loss)}")
             print(f"Words per sec {train_chars/(time.time()-start_time)}")
 
 
@@ -126,14 +127,17 @@ def main():
     if args.load_from is not None:
         # FIXME
         #weight_path = torch.load(MODELS_HOME+args.load_from+".pth.tar")
-        weight_path = torch.load(MODELS_HOME + args.load_from)
-        model = load_WordNLM_model(weight_path, model, device)
+        weight_path = torch.load(MODELS_HOME + "/" + args.load_from)
+        model = load_WordNLM_model(weight_path, model, device, args.load_from)
+        model = load_WordNLM_model(weight_path, model, device, args.load_from)
 
     learning_rate = args.learning_rate
     optim = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.0)
 
     total_start_time = time.time()
     dev_losses = []
+    # FIXME: add this line in train file on server
+    dev_ppl = []
     max_num_epochs = 10
 
     for epoch in tqdm.tqdm(range(max_num_epochs), total=max_num_epochs, desc="Doing epoch"):
@@ -150,6 +154,8 @@ def main():
 
         dev_loss = run_epoch_eval(args, device, model, criterion, dev_chars, itos)
         dev_losses.append(dev_loss)
+        # FIXME: testing new criterion and perplexity calculation
+        dev_ppl.append(math.exp(dev_loss))
 
         logging.info('-' * 89)
         logging.info('| end of epoch {:3d} | time: {:5.2f}s | valid loss {:5.2f} |'.format(
@@ -164,13 +170,19 @@ def main():
             break
 
         SAVE_PATH = MODELS_HOME + "/" + args.my_id + args.save
-        torch.save(model.state_dict(), SAVE_PATH)
+        with open(SAVE_PATH, 'wb') as f:
+            torch.save(model, f)
+        #torch.save(model.state_dict(), SAVE_PATH)
+        #torch.save(dict([(name, module.state_dict()) for name, module in named_modules.items()]), SAVE_PATH)
 
         if (time.time() - total_start_time) / 60 > 4200:
             print("Breaking early to get some result within 72 hours")
             break
         with open(LOG_HOME+"/"+args.language+"_"+__file__+"_"+str(args.my_id), "w") as out_file:
+            print("validation losses:", file=out_file)
             print(" ".join([str(x) for x in dev_losses]), file=out_file)
+            print("perplexities:", file=out_file)
+            print(" ".join([str(x) for x in dev_ppl]), file=out_file)
             print(" ".join(sys.argv), file=out_file)
             print(str(args), file=out_file)
 

@@ -2,7 +2,7 @@ import numpy as np
 import tqdm
 
 from get_sentence_probabilities import compute_logprob, per_sentence_probabilities
-from utils import load_sentences, gender_tokenizer, tokenizer
+from utils import load_sentences, gender_tokenizer, tokenizer, encode_words
 
 
 def gender_test(gender_model, gender_device, vocab_mapping):
@@ -91,21 +91,12 @@ def syntactic_test(path, syntactic_model, syntactic_device, vocab_mapping):
 
     # load & tokenize stimuli
     test_sentences = load_sentences(path)
-    tokens = tokenizer(test_sentences, vocab_mapping)
-    print("number of sentences:", len(tokens))
-
-    # TODO: create function that check if no OOVs in datasets
-    """
-    check_tokens =[]
-    for stc_idx, stc in enumerate(tokens):
-        for token_idx, token_val in enumerate(tokens[stc_idx]):
-            if token_val == 2:
-                check_tokens.append(stc_idx)
-                check_tokens.append(token_idx)
+    tokenized_sentences = tokenizer(test_sentences)
+    encoded_tokens = encode_words(tokenized_sentences, vocab_mapping)
+    print("number of sentences:", len(encoded_tokens))
 
     # Compute word log probabilities
-    """
-    numericalized_sentences, logprobs = compute_logprob(tokens, syntactic_model,
+    numericalized_sentences, logprobs = compute_logprob(encoded_tokens, syntactic_model,
                                                                 vocab_mapping, syntactic_device)
     sentences_nb = len(numericalized_sentences)
 
