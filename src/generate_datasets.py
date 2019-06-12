@@ -6,8 +6,8 @@ from utils import generate_german_dict, load_sentences
 
 
 BASE_PATH = "input_sentences/"
-GRAMMATICAL_END = "masc_grammatical_sentences.txt"
-UNGRAMMATICAL_END = "masc_ungrammatical_sentences.txt"
+GRAMMATICAL_END = "grammatical_sentences.txt"
+UNGRAMMATICAL_END = "ungrammatical_sets.txt"
 TEST_SENTENCES_PATH = BASE_PATH + "sentences.txt"
 
 
@@ -322,4 +322,4 @@ def main(verb_args_number, input_path):
 
 
 if __name__ == "__main__":
-    main(3, "input_sentences/masc_dataset.txt")
+    main(3, "input_sentences/templates.txt")
