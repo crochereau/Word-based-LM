@@ -12,12 +12,11 @@ import torch.nn as nn
 
 from paths import LOG_HOME
 from paths import MODELS_HOME
-from utils import generate_vocab_mappings, load_WordNLM_model
+from utils import generate_vocab_mappings, load_WordNLM_model, prepare_dataset_chunks
 
 import corpus_iterator_wiki_words
 from lm_argparser import parser
 from model import WordNLM
-from train_data_functions import prepare_dataset_chunks
 
 CHAR_VOCABS = {"german": "vocabularies/german-wiki-word-vocab-50000.txt",
                "italian": "vocabularies/italian-wiki-word-vocab-50000.txt",
