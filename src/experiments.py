@@ -7,23 +7,19 @@ from utils import generate_vocab_mappings, load_WordNLM_model, pickle_dump
 from model import WordNLM
 from tests import gender_test, syntactic_test
 
-BASE_DATASETS_PATH = "input_sentences/"
-BASE_RESULTS_PATH = "results/"
+BASE_DATASETS_PATH = "data/"
+BASE_RESULTS_PATH = "results/LSTM_results/"
 CHAR_VOCAB_PATH = "vocabularies/german-wiki-word-vocab-50000.txt"
 
 DATASETS_PATHS = {
-    "masc_grammatical":f"{BASE_DATASETS_PATH}masc_grammatical_sentences.txt",
     "grammatical":f"{BASE_DATASETS_PATH}grammatical_sentences.txt",
-    "masc_ungrammatical":f"{BASE_DATASETS_PATH}masc_ungrammatical_sentences.txt",
-    "ungrammatical":f"{BASE_DATASETS_PATH}ungrammatical_sentences.txt"
+    "ungrammatical":f"{BASE_DATASETS_PATH}ungrammatical_sets.txt",
                   }
 
 RESULTS_PATHS = {
     "gender":"genders.txt",
-    "masc_grammatical":"base_model_masc_gram_probs.txt",
-    "grammatical":"base_model_gram_probs.txt",
-    "masc_ungrammatical":"base_model_masc_ungram_probs.txt",
-    "ungrammatical": "base_model_ungram_probs.txt"
+    "grammatical":"gram_probs.txt",
+    "ungrammatical":"ungram_probs.txt"
                  }
 TESTS = {
     "gender": gender_test,
@@ -33,8 +29,7 @@ TESTS = {
 
 def get_args(*in_args):
     parser = argparse.ArgumentParser()
-    parser.add_argument("--language", dest="language", type=str, default="german")
-    parser.add_argument("--load_from", dest="load_from", type=str, default="base_model")
+    parser.add_argument("--load_from", dest="load_from", type=str, default="LSTM")
     parser.add_argument("--word_embedding_size", type=int, default=200)
     parser.add_argument("--dataset", type=str, required=False)
     parser.add_argument("--hidden_dim", type=int, default=1024)
@@ -52,7 +47,7 @@ def main():
     model = WordNLM(args.word_embedding_size, len(itos), args.hidden_dim, args.layer_num)
     model.to(device)
     if args.load_from is not None:
-        if args.load_from == "base_model":
+        if args.load_from == "LSTM":
             weight_path = MODELS_HOME+"/"+args.load_from+".pth.tar"
         else:
             weight_path = MODELS_HOME + args.load_from
@@ -67,7 +62,7 @@ def main():
         path = DATASETS_PATHS[args.dataset]
         parameters = {"path": path, "syntactic_model": model, "syntactic_device": device, "vocab_mapping": stoi}
     elif args.test == "test2":
-        passll
+        pass
 
     result = TESTS[args.test](**parameters)
     print(result)
