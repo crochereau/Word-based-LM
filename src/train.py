@@ -18,9 +18,7 @@ import corpus_iterator_wiki_words
 from lm_argparser import parser
 from model import WordNLM
 
-CHAR_VOCABS = {"german": "vocabularies/german-wiki-word-vocab-50000.txt",
-               "italian": "vocabularies/italian-wiki-word-vocab-50000.txt",
-               "english": "vocabularies/english-wiki-word-vocab-50000.txt"}
+CHAR_VOCABS = {"german": "vocabularies/german-wiki-word-vocab-50000.txt"}
 
 
 def front_pass(args, device, model, numeric, criterion, hidden, beginning, vocab, print_here=False, train=True):
@@ -41,15 +39,6 @@ def front_pass(args, device, model, numeric, criterion, hidden, beginning, vocab
     log_probs = model.forward(input_tensor)
     loss = criterion(log_probs.view(-1, len(vocab)), target_tensor.view(-1))
 
-    """
-    if print_here:
-        lossTensor = print_loss(log_probs.view(-1, len(itos)+3), target_tensor.view(-1)).view(-1, args.batchSize)
-        losses = lossTensor.data.cpu().numpy()
-        numericCPU = numeric.cpu().data.numpy()
-        print(("NONE", itos[numericCPU[0][0]-3]))
-        for i in range((args.sequence_length)):
-            print((losses[i][0], itos[numericCPU[i+1][0]-3]))
-    """
     return loss, target_tensor.view(-1).size()[0], hidden, beginning
 
 
