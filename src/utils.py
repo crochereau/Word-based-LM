@@ -1,5 +1,5 @@
 import math
-import pickle
+import pickle as pkl
 
 import numpy as np
 import pandas as pd
@@ -106,7 +106,7 @@ def gender_tokenizer(intervening_elements, sentences, word_to_idx):
     return encoded_sentences
 
 
-def generate_vocab_mappings(path):
+def generate_vocab_mappings(path: str):
     """
     Args:
         path: path to the vocabulary
@@ -133,17 +133,16 @@ def get_sentences_probs(padded_sentences, log_predictions):
     Returns:
         sentence_probs: list of sentences probabilities, size = number of sentences
     """
-
     word_log_probs = [[] for _ in range(len(padded_sentences))]
 
     # fetch word log probabilities from log probabilities matrix
     for sentence_idx in range(len(padded_sentences)):
-        for word_idx in range(len(padded_sentences[sentence_idx])):
-            word = padded_sentences[sentence_idx][word_idx]
+        for word_idx, word in enumerate(padded_sentences[sentence_idx]):
             # leave out probabilities of padded zeros
             if word != 0:
                 # append each word log probability to sentence probabilities matrix
-                word_log_probs[sentence_idx].append(log_predictions[word_idx][sentence_idx][word])
+                word_log_prob = log_predictions[word_idx][sentence_idx][word]
+                word_log_probs[sentence_idx].append(word_log_prob)
 
     sentence_probs = []
     for i in range(len(word_log_probs)):
@@ -166,19 +165,17 @@ def get_words_logprobs(tokenized_sentences, model, vocab_mapping, device):
         predictions: matrix of per-word log probabilities, size = length of longer sentence *
                                                                     number of sentences * vocabulary size
     """
-    maxLength = max([len(x) for x in tokenized_sentences])
-    print("maxLength:", maxLength)
+
+    maxLength = max(len(x) for x in tokenized_sentences)
 
     # padding shorter sentences with zeros
     for i in range(len(tokenized_sentences)):
         while len(tokenized_sentences[i]) < maxLength:
             tokenized_sentences[i].append(0)
 
-    input_tensor_forward = torch.tensor([[0]+x for x in tokenized_sentences], dtype=torch.long,
+    input_tensor_forward = torch.tensor([[0] + x for x in tokenized_sentences], dtype=torch.long,
                                     device=device, requires_grad=False).transpose(0, 1)
-    print("input_tensor_forward done")
 
-    #target = input_tensor_forward[1:]
     input_cut = input_tensor_forward[:-1]
 
     with torch.no_grad():
@@ -187,15 +184,6 @@ def get_words_logprobs(tokenized_sentences, model, vocab_mapping, device):
     predictions = prediction.detach().numpy()
 
     # predictions.shape = maxLength * number of sentences * vocabulary size
-
-    """
-    loss_module = torch.nn.NLLLoss(reduction='none', ignore_index=0)
-    print("loss module")
-    losses = loss_module(prediction.reshape(-1, len(vocab_mapping)),
-                                        target.reshape(-1)).reshape(maxLength, len(tokenized_sentences))
-    losses = losses.sum(0).data.cpu().numpy()
-    print("losses done")
-    """
 
     return tokenized_sentences, predictions
 
@@ -263,7 +251,7 @@ def pickle_dump(input_file, path):
 
     """
     with open(path, "wb") as fp:
-        dumped_file = pickle.dump(input_file, fp)
+        dumped_file = pkl.dump(input_file, fp)
     return dumped_file
 
 
@@ -278,7 +266,7 @@ def pickle_load(path):
 
     """
     with open(path, "rb") as fp:
-        loaded_file = pickle.load(fp)
+        loaded_file = pkl.load(fp)
 
     return loaded_file
 
