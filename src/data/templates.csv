@@ -1,0 +1,51 @@
+template,all_animate,principal,verb,art1,noun1,art2,noun2,art3,noun3
+0,0,"Es steht fest, dass",abnimmt,der,Polizist,der,Fahrer,der,Führerschein
+1,0,"Ich finde es toll, dass",anbietet,der,Verkäufer,der,Kunde,ein,Wein
+2,0,"Ich weiß nicht, warum",angekündigt hat,der,Arbeitnehmer,der,Arbeitgeber,sein,Austritt
+3,0,"Mir is aufgefallen, dass",ausgesucht hat,der,Filmregisseur,der,Schauspieler,ein,Anzug
+4,0,"Es ist kaum zu glauben, dass",bewies,der,Anwalt,der,Angeklagter,der,Diebstahl
+5,0,"Wir haben ihm gesagt, dass",bringt,der,Trainer,der,Spieler,der,Schläger
+6,0,"Sie is wütend, weil",enthüllt,der,General,der,Spion,der,Plan
+7,0,"Ich weiß nicht, ob",erklärt,der,Professor,der,Student,der,Artikel
+8,0,"Ich denke, dass",erläutert,der,Wissenschaftler,der,Assistent,der,Begriff
+9,0,"Er hofft, dass",erzählt,der,Clown,der,Musiker,ein,Witz
+10,0,"Sicher ist, dass",garantiert,der,Bürgermeister,der,Politiker,der,Erfolg
+11,0,"Ich wollte dir nur sagen, dass",gab,ein,Mann,der,Nachbar,der,Schlüssel
+12,0,"Ich habe gesehen, dass",gekauft hat,der,Passagier,der,Schaffner,ein,Pass
+13,0,"Sie hat mir gesagt, dass",gekocht hat,der,Gastgeber,der,Besucher,ein,Tee
+14,0,"Ich wollte dir nur sagen, dass",geliehen hat,der,Ingenieur,der,Kollege,der,Rechner
+15,0,"Ich weiß, dass",liefert,der,Verkäufer,der,Kunde,der,Schrank
+16,0,"Er weiß, dass",mitgebracht hat,der,Junge,sein,Kumpel,ein,Ballon
+17,0,"Ihm fiel auf, dass",mitgeteilt hat,der,Vorsitzender,der,Sekretär,der,Termin
+18,0,"Es ist nicht sicher, ob",geöffnet hat,der,Reiseführer,der,Tourist,der,Eingang
+19,0,"Er wollte uns sagen, dass",schreibt,der,Soldat,der,Offizier,ein,Brief
+20,0,"Ich wusste nicht, dass",gesandt hatte,der,Schriftsteller,der,Verleger,ein,Roman
+21,0,"Ich habe erfahren, dass",stahl,der,Einbrecher,der,Händler,sein,Computer
+22,0,"Wir verstehen nicht, warum",überlassen wird,der,Handwerker,sein,Neffe,der,Betrieb
+23,0,"Sie vermutet, dass",übergibt,der,Gläubiger,der,Bankier,ein,Scheck
+24,0,"Ich glaube, dass",überwiesen hat,der,Teilnehmer,der,Veranstalter,der,Beitrag
+25,0,"Es ist nicht wahr, dass",verbot,der,Vater,sein,Sohn,der,Ausflug
+26,0,"Es lohnt sich, dass",verkündet,der,Abgeordneter,der,Journalist,der,Beschluss
+27,0,"Sie hat gehört, dass",vermietet hat,der,Eigentümer,der,Präsidentschaftskandidat,der,Raum
+28,0,"Est ist wahr, dass",verschaffen wird,der,Beamter,der,Betreiber,ein,Vorteil
+29,0,"Wir wünschen, dass",vorgeschrieben hat,der,Arzt,der,Patient,ein,Impfstoff
+30,0,"Es ist mir egal, dass",versprach,der,Direktor,der,Investor,ein,Gewinn
+31,0,"Er glaubt nicht, dass",vergibt,der,Pfarrer,der,Mönch,sein,Fehler
+32,0,"Er vermutet, dass",vorlegen wird,der,Reisender,der,Zöllner,sein,Ausweis
+33,0,"Ich bin nicht sicher, ob",zu lesen gab,der,Dozent,der,Student,der,Text
+34,0,"Wir wissen, dass",schickte,der,Kaufmann,der,Geschäftsmann,ein,Katalog
+35,1,"Es freut mich, dass",anvertraut,der,Lehrer,der,Tutor,der,Schüler
+36,1,"Sie hat erfahren, dass",beschreibt,der,Zeuge,der,Polizist,der,Mörder
+37,1,"Es stimmt nicht, dass",beschrieben hat,der,Beobachter,der,Verdächtiger,der,Privatdetektiv
+38,1,"Er ist überrascht, dass",empfiehlt,der,Buchhändler,der,Herausgeber,der,Autor
+39,1,"Es ist offensichtlich, dass",meldet,der,Prinz,der,König,der,Botschafter
+40,1,"Er regt sich auf, weil",schenkt,der,General,der,Diktator,der,Sklave
+41,1,"Wir machen uns Sorgen, weil",schickt,der,Manager,der,Controller,der,Assistent
+42,1,"Ich finde es schade, dass",übergibt,der,Oberleutnant,der,Feind,der,Spion
+43,1,"Es ist klar, dass",vermittelt hat,der,Makler,der,Mieter,der,Vermieter
+44,1,"Es ist wichtig, dass",vorstellt,der,Experte,der,Minister,der,Berater
+45,1,"Wir freuen uns, dass",vorgeschlagen hat,der,Mitarbeiter,der,Partner,der,Kandidat
+46,1,"Es stört sich aber, dass",verkauft,der,Händler,der,Bürger,der,Sklave
+47,1,"Er findet es merkwürdig, dass",bekannt gab,der,Diktator,der,Minister,sein,Nachfolger
+48,1,"Jeder fragt sich, ob",verraten hat,der,Anwalt,der,Richter,der,Täter
+49,1,"Sie hat bemerkt, dass",zeigt,der,Fußgänger,der,Gärtner,der,Junge
