@@ -1,15 +1,17 @@
 import numpy as np
 import tqdm
+import math
 
+from typing import Mapping
 from utils import get_words_logprobs, load_sentences, gender_tokenizer, get_sentences_probs, tokenizer, encode_words
 
 
-def gender_test(gender_model, gender_device, vocab_mapping):
+def gender_test(gender_model, gender_device, vocab_mapping: Mapping[str, int]):
     """
     Args:
         gender_model: model tested
-        vocab_mapping: dictionary mapping words to unique integers
         gender_device: computing device
+        vocab_mapping: dictionary mapping words to unique integers
 
     Returns: confusion matrix containing the probabilities of predicting each gender
 
@@ -77,34 +79,32 @@ def gender_test(gender_model, gender_device, vocab_mapping):
     return gender_probs
 
 
-def syntactic_test(path, syntactic_model, syntactic_device, vocab_mapping):
+def syntactic_test(path, syntactic_model, syntactic_device, vocab_mapping, batch_size: int = 72):
     """
     Args:
         syntactic_model: model tested
         vocab_mapping: dictionary mapping words to unique integers
         syntactic_device: computing device
+        batch_size: batch size to use while computing logprobs
 
     Returns: list of log probabilities assigned to each sentence
-
     """
 
     # load & tokenize stimuli
     test_sentences = load_sentences(path)
     tokenized_sentences = tokenizer(test_sentences)
     encoded_tokens = encode_words(tokenized_sentences, vocab_mapping)
-    print("number of sentences:", len(encoded_tokens))
+    print("number of sentences after encoding tokens:", len(encoded_tokens), len(encoded_tokens[-1]))
 
-    # Compute word log probabilities
-    numericalized_sentences, logprobs = get_words_logprobs(encoded_tokens, syntactic_model,
+
+    num_steps = math.ceil(len(encoded_tokens) / batch_size)
+    all_probs = []
+    for i in tqdm.trange(num_steps, desc="Computing logprobs"):
+        sent_tok_ids, logprobs = get_words_logprobs(encoded_tokens[i*batch_size:(i+1)*batch_size],
+                                                           syntactic_model,
                                                                 vocab_mapping, syntactic_device)
-    sentences_nb = len(numericalized_sentences)
+        all_probs.extend(get_sentences_probs(sent_tok_ids, logprobs))
 
-    print("number of sentences:", sentences_nb)
-
-    # Compute sentence probabilities
-    probs = get_sentences_probs(numericalized_sentences, logprobs)
-    assert len(probs) == sentences_nb
-
-    return probs
+    return all_probs
 
 
