@@ -2,39 +2,20 @@ import argparse
 
 import torch
 
-from paths import MODELS_HOME
+from paths import MODELS_HOME, DATASETS_PATHS, RESULTS_PATHS, TESTS, BASE_RESULTS_PATH, CHAR_VOCAB_PATH
 from utils import generate_vocab_mappings, load_WordNLM_model, pickle_dump
 from model import WordNLM
-from tests import gender_test, syntactic_test
-
-BASE_DATASETS_PATH = "data/"
-BASE_RESULTS_PATH = "results/LSTM_results/"
-CHAR_VOCAB_PATH = "vocabularies/german-wiki-word-vocab-50000.txt"
-
-DATASETS_PATHS = {
-    "grammatical":f"{BASE_DATASETS_PATH}grammatical_sentences.txt",
-    "ungrammatical":f"{BASE_DATASETS_PATH}ungrammatical_sets.txt",
-                  }
-
-RESULTS_PATHS = {
-    "gender":"genders.txt",
-    "grammatical":"gram_probs.txt",
-    "ungrammatical":"ungram_probs.txt"
-                 }
-TESTS = {
-    "gender": gender_test,
-    "syntax": syntactic_test,
-         }
 
 
 def get_args(*in_args):
     parser = argparse.ArgumentParser()
-    parser.add_argument("--load_from", dest="load_from", type=str, default="LSTM")
+    parser.add_argument("--load_from", dest="load_from", type=str, default="LSTM", help="TBD")
     parser.add_argument("--word_embedding_size", type=int, default=200)
-    parser.add_argument("--dataset", type=str, required=False)
+    parser.add_argument("--dataset", type=str, required=False, choices=list(DATASETS_PATHS.keys()),
+                        help="Path to the text file containing sentences")
     parser.add_argument("--hidden_dim", type=int, default=1024)
     parser.add_argument("--layer_num", type=int, default=2)
-    parser.add_argument("--test", type=str)
+    parser.add_argument("--test", type=str, choices=list(TESTS.keys()))
     args = parser.parse_args()
     return args
 
