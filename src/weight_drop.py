@@ -5,6 +5,7 @@ from torch.nn import Parameter
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
+
 class WeightDrop(torch.nn.Module):
     def __init__(self, module, weights, variational=False):
         super(WeightDrop, self).__init__()
@@ -101,4 +102,3 @@ if __name__ == '__main__':
     assert run1[1] != run2[1]
 
     print('---')
-
