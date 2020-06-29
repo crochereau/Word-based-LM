@@ -7,7 +7,7 @@ from utils import generate_german_dict, load_sentences
 
 BASE_PATH = "input_sentences/"
 GRAMMATICAL_END = "grammatical_sentences.txt"
-UNGRAMMATICAL_END = "ungrammatical_sets.txt"
+UNGRAMMATICAL_END = "ungrammatical_sentences.txt"
 TEST_SENTENCES_PATH = BASE_PATH + "sentences.txt"
 
 
